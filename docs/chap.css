@@ -1,0 +1,67 @@
+/* based on stylesheet from README.lastz.html */
+/* see resource://gre/res/html.css for default firefox style sheet */
+
+body            { margin: 0 4% 0 3%; color: black; background-color: white }
+.shaded         { background-color: #CCCCCC }
+
+p.vvvlarge      { margin-top: 8ex; margin-bottom: 0 }
+p.vvlarge       { margin-top: 6ex; margin-bottom: 0 }
+p.vlarge        { margin-top: 4ex; margin-bottom: 0 }
+p.large         { margin-top: 3ex; margin-bottom: 0 }
+p               { margin-top: 2ex; margin-bottom: 0 }
+p.small         { margin-top: 1ex; margin-bottom: 0 }
+p.tiny          { margin-top: 0.6ex; margin-bottom: 0 }
+p.scrollspace   { margin-top: 100em; margin-bottom: 0 }
+
+                /* margins are relative to header's font size */
+h1              { font-size: 1.5em; margin: 4ex   0 4ex }    /* T LR B */
+h2              { font-size: 1.2em; margin: 4ex   0 3ex }
+h3              { font-size: 1.1em; margin: 4ex   0 2.5ex }
+h4              { font-size: 1em;   margin: 2.5ex 0 1ex;
+                  font-weight: normal; font-style: italic }
+
+hr              { margin-top: 0; margin-bottom: 0; border: 1px inset }
+pre             { margin-top: 0.6ex; margin-bottom: 0.6ex }
+.notop          { margin-top: 0 }
+.nobottom       { margin-bottom: 0 }
+
+code            { padding-left: 0.3ex; padding-right: 0.3ex }
+.pad            { padding-left: 0.3ex; padding-right: 0.3ex }
+.nopad          { padding-left: 0; padding-right: 0 }
+.ttab           { padding-left: 0.3ex; padding-right: 0 }
+.stab           { padding-left: 1ex; padding-right: 0 }
+.mtab           { padding-left: 4ex; padding-right: 0 }
+.wtab           { padding-left: 6ex; padding-right: 0 }
+
+.figno          { font-weight: bold; padding-left: 0; padding-right: 0.8ex }
+dfn, em         { font-weight: normal; font-style: italic }
+sub             { font-size: 0.6em; vertical-align: baseline }
+
+ul, dl                    { margin-top: 0; margin-bottom: 0 }
+li                        { margin-top: 1.5ex; padding-left: 0.5ex }
+
+table                     { margin-top: 0; margin-bottom: 0;
+                            border-collapse: collapse }
+tbody                     { text-align: left; vertical-align: baseline }
+td                        { padding-top: 0.5ex; padding-bottom: 0.5ex;
+                            padding-left: 1ex; padding-right: 2ex }
+table.sub                 { border: none }
+table.sub td              { padding-top: 0; padding-bottom: 0;
+                            padding-left: 0.5ex; padding-right: 0.5ex }
+table.sub td.indent       { padding-left: 3ex }
+table.figure              { border: none }
+table.figure td           { padding-top: 4ex; padding-bottom: 3ex;
+                            padding-left: 0; padding-right: 0;
+                            border: none }
+table.legend1             { width: 80%; border: none }
+table.legend1 td          { padding-top: 2ex; padding-bottom: 0;
+                            padding-left: 0; padding-right: 0;
+                            border: none }
+table.legend2             { font-size: 0.8em; border: none }
+table.legend2 td          { padding: 0; border: none }
+  /* These nested legend tables are needed to keep the legend centered  */
+  /* (as a whole, not line-by-line), regardless of whether or not it is */
+  /* long enough to wrap, in a box narrower than the figure             */
+
+.comment        { font-style: italic; font-weight: bold;
+                  background-color: yellow }

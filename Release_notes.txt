@@ -1,0 +1,71 @@
+
+Release Notes for CHAP
+-----------------------
+
+2012-Jul-26:
+  * Fixed a bug in the handling of masked repeats.
+  * Removed pre-existing masking from sample input sequences for better
+    illustration.
+  * Re-ran the full pipeline on the example files to update output.
+
+2012-Jul-02:
+  * Fixed a bug in the optional helper script for inferring annotations
+    (infer-annot.sh), so it can find the "dna" program.
+
+2012-May-03:
+  * Fixed a bug in the handling of tandem duplications by CAGE (the component
+    that computes preliminary orthologs for use by the conversion detector).
+  * Fixed a bug that occasionally caused a segfault when adjusting event
+    endpoints for consistency among species.
+  * Improved format checking for annotation files, with more helpful error
+    messages.
+
+2012-Mar-30:
+  * CHAP 2 release.
+  * Includes a new orthology mapping pipeline in addition to the conversion
+    detector; output includes orthologous alignments (both by content and
+    by context) for the entire cluster, along with ready-to-view PostScript
+    diagrams showing orthology relationships among the genes.
+  * User-supplied annotations are enhanced via automatic pseudogene detection.
+  * When using the "_ps" suffix to indicate known pseudogenes in annotation
+    files, the suffix should now be placed on the first word of the gene name.
+  * Package files can be installed to user-specified locations that are
+    separate from cluster data.
+  * Files and directories have been reorganized somewhat; some are new and
+    others have been moved and/or renamed.  In particular, note that the
+    viewer scripts gmaj.sh and gmaj-mtm.sh are now called gmaj-conv.sh and
+    gmaj-ortho.sh, respectively.
+  * The gmaj-ortho.sh script has a new parameter to control which type of
+    orthology is shown, and shades introns in pale gray to make it easier
+    to see which exons are part of each gene.
+  * A new utility script facilitates generating annotation files for
+    non-reference species, using the external software Wise2.
+  * The cleanout script now supports several different levels of thoroughness
+    for more flexibility.
+  * Scripts for diagram generation and alignment viewing allow substitution of
+    different annotations from those used for conversion and orthology calls,
+    and exit gracefully if Java is not available.
+  * Better handling of underlay files for Gmaj, and improved handling of
+    multi-word gene labels in Gmaj and the underlay generator.
+  * Gmaj's "Help - Manual" menu item now points to a brief page with links
+    to documentation.
+  * Additional Gmaj improvements include: context-sensitive menus/shortcuts,
+    new color PaleGray, and minor bug fixes.
+  * Expanded documentation and better error messages.
+  * Human gene names have been changed in the sample data for the alpha-globin
+    cluster.
+
+2011-Aug-02:
+  * Updated Gmaj viewer: fixed ClassCastException on Macs with Java 1.6.
+
+2011-Jun-10:
+  * Fixes to improve consistency of results across different platforms.
+  * Underlays for pseudogenes (with name suffix "_ps") are drawn in pale gray.
+  * Advanced users can edit the CRIT_BOUND setting in conversion.sh to control
+    the paralog coverage threshold for criterion selection.
+  * The README file suggests which search engine and repeat database to install
+    for RepeatMasker.
+
+2011-Mar-17:
+  * Initial public release.
+

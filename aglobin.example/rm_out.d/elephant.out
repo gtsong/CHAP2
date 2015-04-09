@@ -1,0 +1,65 @@
+   SW   perc perc perc  query     position in query     matching       repeat            position in repeat
+score   div. del. ins.  sequence  begin end    (left)   repeat         class/family    begin  end    (left)  ID
+
+  558   17.2 17.2  0.0  elephant      4   119 (81882) + MER3           DNA/hAT-Charlie     74    209    (0)   1  
+  277   29.7  0.0  1.9  elephant   2027  2129 (79872) + L1M5           LINE/L1           5787   5887  (237)   2  
+  439   28.0 13.5  2.4  elephant   2271  2566 (79435) + L1M5           LINE/L1           4369   4697 (1449)   3  
+ 1600   25.1  4.3  4.7  elephant   2640  3169 (78832) + L1MB4          LINE/L1           5653   6180    (0)   4  
+  293   20.0  0.0  0.0  elephant   3169  3228 (78773) + L1M5           LINE/L1           5428   5487  (637)   3 *
+  263   23.4 11.7  0.0  elephant   3299  3375 (78626) + L1M5           LINE/L1           5670   5755  (368)   3  
+  251   23.6  0.0  0.0  elephant   3712  3766 (78235) + L1ME4a         LINE/L1           5706   5760  (363)   5  
+  226   23.6  8.9  1.1  elephant   4100  4189 (77812) + L1ME4a         LINE/L1           5970   6066   (58)   5  
+  257   12.1 27.3  0.0  elephant   4966  5031 (76970) + L1MB4          LINE/L1           4980   5063 (1083)   6  
+  235   28.6  2.4  4.0  elephant   5350  5473 (76528) + (TATATG)n      Simple_repeat        3    124    (0)   7  
+   21    0.0  0.0  0.0  elephant   6251  6271 (75730) + AT_rich        Low_complexity       1     21    (0)   8  
+ 1243   16.0  9.5  1.1  elephant   6272  6555 (75446) + L1MB4          LINE/L1           5056   5363  (783)   6  
+ 3413   18.4  6.1  2.0  elephant   6691  7524 (74477) + L1MB4          LINE/L1           5344   6183    (0)   6  
+ 3742   13.8  5.8  2.2  elephant   7571  8245 (73756) + L1MB8          LINE/L1           5477   6175    (3)   9  
+  308   28.2  5.4  6.6  elephant   9822  9988 (72013) + MIRb           SINE/MIR            96    260    (8)  10  
+  501   22.3  6.9  0.0  elephant  12218 12347 (69654) + MIR3           SINE/MIR            64    202    (6)  11  
+ 2839   18.8  2.8  0.7  elephant  12749 13327 (68674) + L1ME1          LINE/L1           5321   5911  (268)  12  
+  237   12.1  0.0  0.0  elephant  13328 13360 (68641) + MLT1C          LTR/ERVL-MaLR        1     33  (434)  13  
+  357   29.5  3.7  1.0  elephant  13686 13840 (68161) + MLT1C          LTR/ERVL-MaLR      234    467    (0)  14  
+  654   26.6  2.8  3.0  elephant  13842 14106 (67895) + L1ME1          LINE/L1           5908   6170    (3)  12  
+  757   21.3 13.6  2.8  elephant  14997 15247 (66754) + L1MB4          LINE/L1           5903   6180    (0)  15  
+  248   20.7  5.7  4.0  elephant  16154 16329 (65672) + (TGAG)n        Simple_repeat        2    180    (0)  16  
+  183   25.0 12.5  0.0  elephant  16647 16702 (65299) + L2b            LINE/L2           3312   3374    (1)  17  
+  718   19.1  5.8  0.6  elephant  16715 16888 (65113) C MER96B         DNA/hAT          (196)    221     39  18  
+  197   14.6  0.0  2.0  elephant  17124 17172 (64829) + (CGGGG)n       Simple_repeat        1     48    (0)  19  
+  210   29.5  7.9  3.9  elephant  17789 17915 (64086) C L2a            LINE/L2            (0)   3426   3295  20  
+  520   25.6  9.1  4.5  elephant  17931 18151 (63850) + L1MC4a         LINE/L1           5344   5574 (2308)  21  
+  409   23.8  3.4 13.8  elephant  18191 18458 (63543) + L1MC4a         LINE/L1           5720   5959 (1923)  21  
+  206   17.4  2.2  0.0  elephant  18459 18504 (63497) + (TA)n          Simple_repeat        2     48    (0)  22  
+   21    0.0  0.0  0.0  elephant  19397 19417 (62584) + AT_rich        Low_complexity       1     21    (0)  23  
+ 5274   21.3  8.2  1.9  elephant  20066 20112 (61889) C L1MC4          LINE/L1            (1)   8041   7991  24  
+  885   15.7  2.1  1.1  elephant  20113 20299 (61702) + L1MB8          LINE/L1           5990   6178    (0)  25  
+ 5274   21.3  8.2  1.9  elephant  20300 21574 (60427) C L1MC4          LINE/L1           (52)   7990   6635  24  
+  553   23.0  0.0  0.0  elephant  21747 21859 (60142) C L1MC4          LINE/L1         (1423)   6619   6507  24  
+  417   20.9  7.6  2.5  elephant  22668 22785 (59216) C L2a            LINE/L2           (25)   3401   3278  26  
+  302   14.5  7.6  3.4  elephant  25390 25477 (56524) C MLT2D          LTR/ERVL          (48)    512    430  27  
+  233   24.0 12.0  0.0  elephant  25802 25876 (56125) C MLT2D          LTR/ERVL         (380)     84      1  27  
+ 5833   26.9  4.1  3.5  elephant  28832 31862 (50139) + L1MB3          LINE/L1           1511   4572 (2276)  28  
+ 5007   24.1  1.3  0.8  elephant  32050 34162 (47839) + L1MB3          LINE/L1           4562   6711  (174)  28  
+11990   26.1  1.9  1.4  elephant  35711 40768 (41233) C L1MB4          LINE/L1          (260)   6156    960  29  
+ 7682   27.9  3.4  6.8  elephant  43659 47993 (34008) C L1M4c          LINE/L1         (1083)   5296    966  30  
+  477   26.3  0.6  6.6  elephant  50706 50888 (31113) C MSTD           LTR/ERVL-MaLR      (0)    467    234  31  
+  480   28.1  0.6  6.6  elephant  51300 51482 (30519) C MLT1C          LTR/ERVL-MaLR      (0)    467    296  32  
+  248    6.5  0.0  0.0  elephant  51783 51813 (30188) C MLT1C          LTR/ERVL-MaLR    (436)     31      1  33  
+  423    0.0  0.0  0.0  elephant  51988 52034 (29967) + (TA)n          Simple_repeat        2     48    (0)  34  
+  222   21.9  0.0  0.0  elephant  52210 52273 (29728) + (TG)n          Simple_repeat        2     65    (0)  35  
+  233   21.9  9.7  8.5  elephant  54088 54118 (27883) + L1ME5          LINE/L1           5915   5946  (248)  36  
+ 1837   15.4  1.8  1.2  elephant  54119 54453 (27548) + L1MB4          LINE/L1           5844   6180    (0)  37  
+  233   21.9  9.7  8.5  elephant  54454 54586 (27415) + L1ME5          LINE/L1           5947   6081  (113)  36  
+  197   14.6  0.0  2.0  elephant  56386 56434 (25567) + (CGGGG)n       Simple_repeat        1     48    (0)  38  
+  216   26.3  0.0  0.0  elephant  58384 58440 (23561) + (TTCA)n        Simple_repeat        2     58    (0)  39  
+   28    2.9  0.0  0.0  elephant  64350 64384 (17617) + GC_rich        Low_complexity       1     35    (0)  40  
+ 2225   16.8  2.0  2.2  elephant  66184 66634 (15367) + L1MB5          LINE/L1           5725   6174    (0)  41  
+  262   26.5  3.4  5.7  elephant  66758 66845 (15156) C MIRb           SINE/MIR          (53)    215    130  42  
+  184   24.5  3.6  3.6  elephant  71117 71171 (10830) C MIR            SINE/MIR         (201)     61      7  42  
+  180    0.0  0.0  0.0  elephant  71457 71476 (10525) + (CCCCCA)n      Simple_repeat        3     22    (0)  43  
+  202   20.6  0.0  0.0  elephant  75259 75292  (6709) + polypyrimidine Low_complexity       4     37    (0)  44  
+ 2737   24.8  2.1  1.2  elephant  76258 77124  (4877) + L1MB3          LINE/L1           5134   6005  (178)  45  
+   23    0.0  0.0  0.0  elephant  78044 78066  (3935) + AT_rich        Low_complexity       1     23    (0)  46  
+  465   24.8 20.5  0.4  elephant  78258 78516  (3485) + Charlie2b      DNA/hAT-Charlie   2204   2514  (268)  47  
+  262   29.2 11.5  0.0  elephant  78595 78707  (3294) + Charlie2a      DNA/hAT-Charlie   2731   2856    (5)  48  
+  259   20.9  4.4  1.5  elephant  79229 79296  (2705) C tRNA-Asn-AAC   tRNA               (1)     76      7  49  

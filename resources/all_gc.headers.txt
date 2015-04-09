@@ -1,0 +1,1 @@
+#pair	species	beg1	end1	species	beg2	end2	orient	length	identity	gc_len	p-value	gc_beg1	gc_end1	gc_beg2	gc_end2	direction	c1_name	c1_start	c1_end	c1_orient	c2_name	c2_start	c2_end	c2_orient	event_id	tree_branch	c1_blocks	c2_blocks	ortholog_status

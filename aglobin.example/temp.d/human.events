@@ -1,0 +1,20 @@
+c human.human 35801 37324 human.human 31995 33513 0 1 99
+c human.human 13271 14208 human.human 23861 24788 0 2 99
+c human.human 29450 30181 human.human 33707 34437 0 2 99
+# sp chimp
++ human.human 31823 31992 human.human 35380 35574 0 1 89
+c human.human 33699 34835 human.human 29442 30580 0 1 98
+# sp gibbon
+c human.human 22923 23407 human.human 12705 13181 0 1 95
+# sp colobus vervet baboon
+# sp dusky_titi marmoset owl_monkey saimiri
++ human.human 35798 37708 human.human 31992 33880 0 2 96
+# sp galago mouse_lemur
++ human.human 22833 24844 human.human 12608 14243 0 2 96
++ human.human 32765 35047 human.human 28556 30792 0 2 87
+c human.human 31686 32586 human.human 37856 38586 0 2 99
+c human.human 37848 38984 human.human 31678 32985 0 1 98
+c human.human 24558 25042 human.human 14340 14816 0 1 95
+# sp tree_shrew
+# sp cow
+# sp elephant

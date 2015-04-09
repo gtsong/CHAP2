@@ -1,0 +1,755 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>The Cluster History Analysis Package (CHAP 2)</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="stylesheet" type="text/css" href="docs/chap.css">
+</head>
+<body>
+<p class=vvlarge>
+<h1>The Cluster History Analysis Package (CHAP 2)</h1>
+
+TABLE OF CONTENTS
+
+<p class=small>
+<ul class=notop>
+<li class=notop><a href="#intro">Introduction</a>
+<li class=notop><a href="#install">Installation</a>
+<li class=notop><a href="#prep">Data Preparation</a>
+<li class=notop><a href="#orth">Orthology Pipeline</a>
+<li class=notop><a href="#orthout">Orthology Output</a>
+<li class=notop><a href="#conv">Conversion Pipeline</a>
+<li class=notop><a href="#convout">Conversion Output</a>
+<li class=notop><a href="#util">Utility Programs</a>
+<li class=notop><a href="#refs">References</a>
+</ul>
+<p class=vvlarge>
+
+<!---->
+<!-- Introduction -->
+<!---->
+
+<div><a name="intro"></a></div>
+<h2>Introduction</h2>
+
+<p>
+<ul>
+<li>	This is the second major release of the CHAP package for analyzing the
+	evolutionary history of gene clusters, discussed in
+	<a href="#song_2012">Song et al. (2012)</a>.  It includes the conversion
+	detector pipeline from the original CHAP package
+	(<a href="#song_2011">Song et al. 2011</a>), and adds a new pipeline that
+	focuses on identifying orthologous regions between species, using two
+	distinct paradigms for defining orthology: <dfn>X-orthology</dfn> (based
+	on genomic conte<u><i>x</i></u>t) and <dfn>N-orthology</dfn> (based on
+	sequence conte<u><i>n</i></u>t).
+	<p class=small>
+	Both of these methods rely on the conversion calls from the original pipeline,
+	so the new pipeline always calls the old one automatically.  Thus you can
+	run the orthology script and get both orthology and conversion results, or
+	if you are only interested in conversions you can just run the old command
+	as before.  (Actually the original pipeline produces orthologs too, because
+	it needs them for detecting conversions, but they are obtained by a different
+	method and are rough and preliminary.)  Note that the conversion pipeline
+	runs for all species at once, but the new orthology mapper currently runs
+	only for the single reference species you specify.
+	<p class=small>
+	Preparation of input data is nearly identical for the two pipelines, except
+	that the new orthology one makes more use of gene annotations, especially
+	for visualizing gene orthology, whereas annotations are recommended but not
+	strictly necessary for the original conversion pipeline.  We will discuss
+	the input files for both pipelines together in one section, and then devote
+	separate sections for the commands and output of the two programs.
+<li>	Platform:&nbsp; This package is designed for Unix/Linux systems.  The core
+	programs are written in C and compiled with <code>make</code> and
+	<code>gcc</code> (though other C compilers could probably be used by adjusting
+	the <code class=nopad>Makefile</code>s).  User commands are provided in the
+	form of Bourne shell scripts, which use various standard utilities such as
+	<code>cat</code>, <code>grep</code>, <code>sed</code>, <code>tr</code>, etc.
+	If you want to get automatic orthology diagrams or use the included Gmaj
+	program to view the results interactively, you will also need a Java runtime
+	environment; for best compatibility
+	<a href="http://java.com/en/download/manual.jsp">Sun's JRE</a> (or JDK) is
+	recommended.
+</ul>
+
+<!---->
+<!-- Installation -->
+<!---->
+
+<div><a name="install"></a></div>
+<h2>Installation</h2>
+
+<p>
+<ol>
+<li>	The CHAP pipelines need to run the RepeatMasker program
+	(<a href="#smit_2010">Smit et al. 1996-2010</a>), which can be obtained
+	from <a href="http://www.repeatmasker.org/">www.repeatmasker.org</a>.  When
+	installing RepeatMasker you will need to choose which sequence search engine
+	and which repeat database library to use; we suggest Cross_Match and RepBase
+	respectively, which are both free for academic use.  If the
+	<code>RepeatMasker</code> executable is not in your command path, modify the
+	right-hand side of the line
+	<pre>    REPEATMASKER=RepeatMasker</pre>
+	near the start of the file <code>conversion.sh</code> to indicate its location
+	on your computer.
+<li>	In the directory containing the unpacked files from the CHAP distribution
+	archive, which we will call the "package directory", type
+	<pre>    make</pre>
+	to compile the component programs and install them in the <code>bin</code>
+	subdirectory.
+<li>	<i>For advanced users:</i>&nbsp;
+	By default (if you just run <code>make</code>), CHAP is configured to keep
+	its scripts and Java programs in the package directory, while compiled
+	binaries and resource data files are located in the <code>bin</code> and
+	<code>resources</code> subdirectories, respectively.  If you want to
+	install it elsewhere (e.g. centrally for multiple users), you can edit the
+	lines for <code>CHAP_SCRIPT_DIR</code>, <code>CHAP_JAVA_DIR</code>,
+	<code>CHAP_BINARY_DIR</code>, and <code>CHAP_RESOURCE_DIR</code> at the top
+	of the <code>Makefile</code> to specify the desired locations, and then run
+	<pre>    make install</pre>
+	(it is not necessary to run <code>make</code> first, but it doesn't hurt
+	either).  This will configure the installed scripts to look for their
+	programs and resource files in the directories you have specified, instead
+	of relative to the working <a href="#prep">cluster directory</a> (which
+	then no longer needs to be inside the package directory).  However, it also
+	means that users will need to modify the command paths in the examples
+	accordingly.
+</ol>
+
+<!---->
+<!-- Data Preparation -->
+<!---->
+
+<div><a name="prep"></a></div>
+<h2>Data Preparation</h2>
+
+<p>
+For each gene cluster that you want to analyze, do the following.
+<ol>
+<li>	In the package directory, create a subdirectory for the cluster, which
+	we will call the "cluster directory".
+<li>	<i>Sequences.</i>&nbsp;
+	In the cluster directory, create a subdirectory called <code>seq.d</code>
+	and put your FastA-formatted sequence files in it, giving each file the
+	appropriate species name, e.g., <code>human</code>, <code>vervet</code>.
+<li>	<i>Annotations.</i>&nbsp;
+	In the cluster directory, create another subdirectory called
+	<code>annot.d</code> and put your gene annotation files in it.  These files
+	use a "coding exons" format that is similar to the exons format supported
+	by our <a href="http://pipmaker.bx.psu.edu/pipmaker/">PipMaker</a> server,
+	except that the position endpoints reflect coding regions only (i.e.
+	translation rather than transcription, so UTRs are excluded).  The CHAP
+	distribution includes <a href="aglobin.example/annot.d">sample files</a>
+	in this format.  The file names must consist of the species name followed
+	by a <code>.codex</code> extension, e.g. <code>human.codex</code>,
+	<code>vervet.codex</code>, etc.
+	<p class=small>
+	In this format, the directionality of a gene (<code>&gt;</code>,
+	<code>&lt;</code>, or <code>|</code>), the start and end positions of its
+	coding sequence, and its name should be on one line, followed by lines
+	specifying the coding start and end positions of each exon, which must be
+	listed in order of increasing address even if the gene is on the reverse
+	strand (<code>&lt;</code>).  All positions are relative to the cluster
+	sequence files you provide (not the entire chromosomes), and use a 1-based,
+	closed-interval coordinate system (i.e., the first nucleotide in your
+	corresponding sequence file is called "1", and the specified ranges
+	include both endpoints).  Names ending in <code>_ps</code> indicate
+	pseudogenes (an exception to the "coding only" rule).  We recommend
+	limiting each gene name to a single word (i.e. without spaces), but if
+	it has multiple words then the <code>_ps</code> suffix must be on the
+	first word rather than the last one in order to be properly recognized.
+<!--	<span class=comment>[The programs in ortho_map are using strstr() to check
+	for "_ps" anywhere in the name.  This might be too loose, e.g. if a gene
+	name is something like "XYZ_psi_wingless".  I think the approach in
+	gc-info.c (last 3 characters of the first word) is more robust.]</span> -->
+	<p class=small>
+	Thus, the file might begin as follows:
+<pre>
+     > 12910 14400 HBZ-T1
+     12910 13004
+     13892 14096
+     14272 14400
+     > 23122 25156 HBZ-T2_ps
+     23122 25156
+     > 25998 26708 HBK
+     25998 26089
+     26268 26472
+     26580 26708
+     ... etc.
+</pre>
+	<p class=small>
+	The orthology pipeline requires these annotation files for making its
+	<a href="#orthout">gene orthology diagrams</a>; you must supply gene
+	annotations for the reference and at least one other species to get any
+	figures.  If you just want orthologous alignments for the sequences, or
+	if you are just running the conversion pipeline, then these files are
+	not strictly necessary but are still recommended for best accuracy.
+	They assist somewhat in the preliminary ortholog detection for finding
+	conversions, and the enhanced orthology mapper uses them to refine its
+	similarity scoring.  If present, they are also used by the
+	<code>gc-info</code> summary program to compute conversion statistics
+	for coding regions (with pseudogenes excluded), and by Gmaj to annotate
+	its display.
+	<p class=small>
+	If you do not know the actual gene locations in some of your sequences,
+	you may be able to estimate them with a program such as
+	<a href="http://www.ebi.ac.uk/Tools/Wise2/doc_wise2.html">Wise2</a>
+	(<a href="#birney_2004">Birney et al. 2004</a>), using known protein
+	sequences in, say, human to find gene structures within the DNA sequences
+	of other species.  The CHAP package includes a utility script called
+	<code>infer-annot.sh</code> to help with automating this approach; please
+	see the <a href="#util">Utility Programs</a> section for information on
+	how to use it.
+<li>	<i>Species tree.</i>&nbsp;
+	Put a text file containing a binary species tree in the cluster directory.
+	The species names in the tree must match the file names used for your
+	sequences.  CHAP uses a simplified version of the
+	<a href="http://evolution.genetics.washington.edu/phylip/newicktree.html"
+	>Newick</a> format, where branch lengths are omitted, all leaf nodes have
+	names but interior nodes do not, and the tree is rooted at an interior node.
+	Quoted labels are not supported, nor are comments in square brackets.
+	(However unlike <a href="http://www.bx.psu.edu/miller_lab/">TBA</a>, CHAP
+	does expect the usual commas and ending semicolon.)  The tree can include
+	line breaks and extra spaces/tabs, but its maximum total length (excluding
+	whitespace) is currently 1000 characters.  This file can have any name;
+	for concreteness, let's suppose it is called <code>species_tree.txt</code>.
+</ol>
+
+<!---->
+<!-- Orthology Pipeline -->
+<!---->
+
+<div><a name="orth"></a></div>
+<h2>Orthology Pipeline</h2>
+
+<p>
+<ol>
+<li>	In the cluster directory (which contains subdirectories <code>seq.d</code>
+	and <code>annot.d</code> as well as the species tree, from steps 2-4 of the
+	<a href="#prep">Data Preparation</a> section), run a command like
+	<pre>    ../ortho.sh species_tree.txt human</pre>
+	where the last argument is the name of the sequence to use as the reference.
+	The pipeline may take from several minutes to an hour or more, depending
+	on the complexity of the cluster's history and the number of sequences.
+<li>	If desired, you can run the pipeline again for a different reference, e.g.
+	<pre>    ../ortho.sh species_tree.txt vervet --no_rm</pre>
+	This is currently rather inefficient because it runs the conversion pipeline
+	again unnecessarily, but at least the <code>--no_rm</code> option avoids
+	re-running RepeatMasker.  Since the output files include the reference in
+	their names, your earlier results should coexist peacefully without being
+	overwritten.  One small exception, however, is the inferred pseudogenes in
+	the <code>fig_annot.d</code> directory, which are used by default for the
+	PostScript figures and Gmaj viewer.  These are computed in a theoretically
+	reference-dependent manner, so their endpoints may change slightly when
+	they are overwritten by a new run.  Note that running multiple jobs
+	simultaneously in the same cluster directory is <em>not</em> supported
+	and may produce erroneous output, since they will attempt to use the same
+	temporary scratch files.
+</ol>
+
+<!---->
+<!-- Orthology Output -->
+<!---->
+
+<div><a name="orthout"></a></div>
+<h2>Orthology Output</h2>
+
+<p>
+<ul>
+<li>	If you have Java installed and have provided gene annotation files for
+	the reference and at least one other species, you will automatically get
+	PostScript figures that summarize the genes' X-orthology and N-orthology.
+	These files have names like <code>human.x-ortho.eps</code> and
+	<code>human.n-ortho.eps</code> respectively, where the first part
+	of the name indicates the reference sequence.  They are placed in the
+	<code>figures.d</code> directory.
+<li>	The files in the <code>ortho.d/events.d</code> directory list the
+	evolutionary events identified in the reference sequence by the orthology
+	mapper; these may be helpful for interpreting the figures.  Events are
+	listed in reverse chronological order (i.e., most recent first).  Lines
+	beginning with <span class=pad>"<code class=nopad># sp</code>"</span>
+	represent speciation events where the reference lineage split from the
+	subtree containing the indicated species.  The other lines contain six
+	space-separated columns, listed in <a href="#table1">Table 1</a>.
+	<p class=small>
+	Note that all position coordinates are 1-based, closed-interval (i.e.
+	the first nucleotide in the FastA sequence is called "1", and the intervals
+	include both endpoints), and are specified relative to the present-day
+	sequence for the reference species (e.g. <code>seq.d/human</code>).
+
+	<div><a name="table1"></a></div>
+	<p>
+	<b>Table 1.</b>&nbsp; Fields in event output files
+	                      (<code>ortho.d/events.d/*.events</code>).
+	<p class=small>
+	<table border=1>
+	<tbody>
+	<tr>	<td>col_1</td>
+		<td>event type, encoded as:
+			<table class=sub>
+			<tr><td class=indent>d:</td>
+			    <td>deletion</td></tr>
+			<tr><td class=indent>+:</td>
+			    <td>duplication (same orientation)</td></tr>
+			<tr><td class=indent>&minus;:</td>
+			    <td>duplication (inverted)</td></tr>
+			<tr><td class=indent>c:</td>
+			    <td>conversion (between paralogs with the same orientation)</td></tr>
+			<tr><td class=indent>v:</td>
+			    <td>conversion (between paralogs with opposite orientations)</td></tr>
+			</table></td></tr>
+	<tr>	<td>col_2,<br>col_3</td>
+		<td>start and end positions of the source region (or deleted region)</td></tr>
+	<tr>	<td>col_4,<br>col_5</td>
+		<td>start and end positions of the target region (<code>0 0</code> for
+              deletions)</td></tr>
+	<tr>	<td>col_6</td>
+		<td>percent identity of the two regions (<code>0</code> for deletions)</td></tr>
+	</tbody>
+	</table>
+	<p>
+<li>	The detailed orthology calls (for the entire sequences, not just genes)
+	are stored as pairwise orthologous alignments in
+	<a href="http://genome.ucsc.edu/FAQ/FAQformat">MAF</a> format, in directories
+	<code>ortho.d/x-ortho.d</code> and <code>ortho.d/n-ortho.d</code>.  You can
+	pass these to other tools for further analysis, or examine them visually
+	by running Gmaj with commands like
+	<pre class=nobottom>    ../gmaj-ortho.sh human vervet context</pre>
+	or
+	<pre class=notop>    ../gmaj-ortho.sh human vervet content</pre>
+	See the <a href="#util">Utility Programs</a> section for more information
+	about <code>gmaj-ortho.sh</code>.
+<li>	The file <code><a href="docs/ortho.html">docs/ortho.html</a></code>
+	provides examples of how to interpret the PostScript figures and
+	use Gmaj to investigate the orthology results.
+<li>	Note that the results for different choices of the reference sequence
+	might not be completely consistent.  In particular, determining the full
+	evolutionary history of the cluster in all of the species simultaneously
+	is a task planned for future work.
+<li>	All of the <a href="#convout">conversion output</a> is also produced.
+</ul>
+
+<!---->
+<!-- Conversion Pipeline -->
+<!---->
+
+<div><a name="conv"></a></div>
+<h2>Conversion Pipeline</h2>
+
+<p>
+Note that the <a href="#orth">orthology pipeline</a> will run this for you
+automatically, so you only need to run it manually if you are not interested
+in the improved orthology calls.  Also, the conversion pipeline always runs
+for all reference sequences, not just the one you specify for orthology.
+<ol>
+<li>	In the cluster directory (which contains subdirectories <code>seq.d</code>
+	and <code>annot.d</code> as well as the species tree, from steps 2-4 of the
+	<a href="#prep">Data Preparation</a> section), run the command
+	<pre>    ../conversion.sh species_tree.txt</pre>
+	The pipeline may run for an hour or more.
+<li>	<i>For advanced users:</i>&nbsp;
+	The conversion pipeline has a number of internal parameters that have been
+	carefully tuned to reasonable defaults.  One of these that is fundamental
+	to our method for detecting conversions is the paralog coverage threshold
+	for choosing whether to use the regular triplet/quadruplet criterion or the
+	alternative "old dup" criterion: if a particular putative conversion covers
+	more than the given fraction of its paralog pair by length, then the
+	alternative criterion is used to test it.  The default value for this
+	threshold is 80%, and our simulation study showed that the results are not
+	greatly affected by its exact value.  However, if you do want to adjust it
+	(e.g. for an unusual situation), you can edit the line
+	<pre>    CRIT_BOUND=0.8</pre>
+	near the start of the file <code>conversion.sh</code>.  Note that values
+	below 60% or above 90% are generally not recommended.
+</ol>
+
+<!---->
+<!-- Conversion Output -->
+<!---->
+
+<div><a name="convout"></a></div>
+<h2>Conversion Output</h2>
+
+<p>
+<ul>
+<li>	You can get a tab-separated file with summary statistics on the conversions
+	found in each species by running the command
+	<pre>    ../bin/gc-info non-redundant.gc annot.d self.d</pre>
+<li>	To examine the conversion evidence in detail using Gmaj, run commands like
+	<pre>    ../gmaj-conv.sh human</pre>
+	where the argument is the reference species whose conversions you want to see.
+	The <a href="#util">Utility Programs</a> section has more information about
+	<code>gmaj-conv.sh</code>, and the file
+	<code><a href="docs/gmaj_geneconv.html">docs/gmaj_geneconv.html</a></code>
+	provides a short tour of how to use Gmaj to investigate conversions.
+	<!-- while more general documentation for Gmaj is available at
+	<a href="http://www.bx.psu.edu/miller_lab">www.bx.psu.edu/miller_lab</a> -->
+<li>	The primary output file from the pipeline is <code>all.gc</code>, which
+	contains the details of all of the conversion observations in each species,
+	and can be inspected directly if <code>gc-info</code> and Gmaj do not convey
+	the desired information.  Additional output files include
+	<code>non-redundant.gc</code>, which lists only one representative line from
+	<code>all.gc</code> for each distinct conversion event,
+	<code>species_tree_with_index.txt</code>, which simply numbers the tree
+	branches consecutively for reference purposes, and an assortment of MAF
+	alignments, some of which are used by Gmaj.
+<li>	The <code>all.gc</code> and <code>non-redundant.gc</code> files use the
+	same format.  The first line is a copy of the
+	<code>species_tree_with_index.txt</code> file, labeling the tree edges so
+	those associated with each conversion event can be indicated.  The next line
+	provides brief headers for the data columns, and subsequent lines contain
+	detailed information for each paralogous pair of intervals where conversion
+	was detected, using the tab-separated fields listed in
+	<a href="#table2">Table 2</a>.
+	<p class=small>
+	Note that all position coordinates are 1-based, closed-interval (i.e.
+	the first nucleotide in the FastA sequence is called "1", and the intervals
+	include both endpoints), and are specified relative to the entire given
+	sequence for that species (e.g. conversion regions are <em>not</em> relative
+	to the paralogs in which they are found).  If an interval has an orientation
+	(strand) of <span class=pad>"<code class=nopad>&minus;</code>"</span>,
+	the endpoints are reported the same as if it were
+	<span class=pad>"<code class=nopad>+</code>"</span>.
+
+	<div><a name="table2"></a></div>
+	<p>
+	<b>Table 2.</b>&nbsp; Fields in conversion output files <code>all.gc</code>
+	                      and <code>non-redundant.gc</code>.
+	<p class=small>
+	<table border=1>
+	<tbody>
+	<tr>	<td>pair</td>
+		<td>index for each pair of paralogous sequences within a species</td></tr>
+	<tr>	<td>species</td>
+		<td>name of species containing the conversion</td></tr>
+	<tr>	<td>beg1,<br>end1</td>
+		<td>start and end positions of the first sequence (i.e., the first
+		    paralogous interval of the pair, in the named species)</td></tr>
+	<tr>	<td>species</td>
+		<td>name of species (again)</td></tr>
+	<tr>	<td>beg2,<br>end2</td>
+		<td>start and end positions of the second sequence (i.e., the second
+		    paralogous interval)</td></tr>
+	<tr>	<td>orient</td>
+		<td>orientation (strand) of the second sequence with respect to the
+		    first</td></tr>
+	<tr>	<td>length</td>
+		<td>length of the first sequence</td></tr>
+	<tr>	<td>identity</td>
+		<td>fraction of identical nucleotides for the two sequences</td></tr>
+	<tr>	<td>gc_len</td>
+		<td>length of the conversion region (measured in the first sequence)</td></tr>
+	<tr>	<td>p-value</td>
+		<td><i>P</i>-value for the conversion test</td></tr>
+	<tr>	<td>gc_beg1,<br>gc_end1</td>
+		<td>start and end positions for the conversion region in the first
+		    sequence</td></tr>
+	<tr>	<td>gc_beg2,<br>gc_end2</td>
+		<td>start and end positions for the conversion region in the second
+		    sequence</td></tr>
+	<tr>	<td>direction</td>
+		<td>direction of conversion, encoded as:
+			<table class=sub>
+			<tr><td class=indent>0:</td>
+			    <td>unknown</td></tr>
+			<tr><td class=indent>1:</td>
+			    <td>the first sequence is converted</td></tr>
+			<tr><td class=indent>2:</td>
+			    <td>the second sequence is converted</td></tr>
+			</table></td></tr>
+	<tr>	<td>c1_name,<br>c1_start,<br>c1_end,<br>c1_orient</td>
+		<td>ortholog of the first sequence in the outgroup species</td></tr>
+	<tr>	<td>c2_name,<br>c2_start,<br>c2_end,<br>c2_orient</td>
+		<td>ortholog of the second sequence in the outgroup species</td></tr>
+	<tr>	<td>event_id</td>
+		<td>identifying number for the conversion event (note that multiple
+		    observation lines may reflect the same event)</td></tr>
+	<tr>	<td>tree_branch</td>
+		<td>indication of where the conversion event occurred in the tree topology,
+		    specified as a comma-separated list of possible edges</td></tr>
+	<tr>	<td>c1_blocks</td>
+		<td>indices of alignment blocks containing the ortholog of the first
+		    sequence</td></tr>
+	<tr>	<td>c2_blocks</td>
+		<td>indices of alignment blocks containing the ortholog of the second
+		    sequence</td></tr>
+	<tr>	<td>ortholog_status</td>
+		<td>status of orthologs in the outgroup species, encoded as:
+			<table class=sub>
+			<tr><td class=indent>0:</td>
+			    <td>no orthologs</td></tr>
+			<tr><td class=indent>1:</td>
+			    <td>triplet test; only paralog #1 has an ortholog</td></tr>
+			<tr><td class=indent>2:</td>
+			    <td>triplet test; only paralog #2 has an ortholog</td></tr>
+			<tr><td class=indent>3:</td>
+			    <td>quadruplet test; both paralogs have distinct orthologs</td></tr>
+			<tr><td class=indent>4:</td>
+			    <td>"old dup" test; the conversion event covers almost the entire
+			        duplicated region, and both paralogs have distinct orthologs,
+			        indicating that the duplication preceded the speciation
+			        (this is the "alternative criterion" discussed in
+			        <a href="#song_2011">Song et al. (2011)</a>)</td></tr>
+			</table></td></tr>
+	</tbody>
+	</table>
+	<p>
+</ul>
+
+<!---->
+<!-- Utility Programs -->
+<!---->
+
+<div><a name="util"></a></div>
+<h2>Utility Programs</h2>
+
+<p>
+Note that running these programs without any arguments will typically give you
+a brief reminder of the usage syntax.
+<p>
+<ul>
+<li>	<b><code>ortho-fig.sh</code></b>
+	<p class=small>
+	This script generates the PostScript orthology figures, by first creating
+	the <code>*.fig</code> files describing the diagrams and then running the
+	<code>orthofig.jar</code> program with appropriate parameters to do the
+	actual drawing (<code>*.eps</code>).  It is normally called automatically
+	by the main <code>ortho.sh</code> pipeline, but you can rerun it manually
+	if needed (e.g. to use a different set of gene annotations), via a command
+	like
+	<pre>    ../ortho-fig.sh human annot_dir</pre>
+	The reference species must be one for which you have already run
+	<code>ortho.sh</code>.  If you do not specify an annotation directory, the
+	default is to use <code>fig_annot.d</code>, which contains your original
+	annotations from <code>annot.d</code> plus pseudogenes that have been
+	inferred by the pipeline.  The colors for the gene boxes are specified in
+	the file <code>ortho-fig.colors</code>, which you can edit if desired.  By
+	default this file is located in the package's <code>resources</code>
+	directory.
+<li>	<b><code>orthofig.jar</code></b>
+	<p class=small>
+	This is the Java program that draws the PostScript figures from the
+	<code>*.fig</code> files.  You can rerun it manually to change the drawing
+	parameters, but only after the <code>*.fig</code> files have been created.
+	The <code>ortho-fig.sh</code> script prints the parameters it is using, so
+	you can just tweak the ones you want to.  For an explanation of the
+	available parameters, run the command
+	<pre>    java -jar ../orthofig.jar -help</pre>
+<li>	<b><code>gmaj-ortho.sh</code></b>
+	<p class=small>
+	This script runs Gmaj to view the orthology calls between the reference
+	and another species.  The orthologous alignments are shown superimposed
+	(in black) on the full set of chained pairwise alignments between the two
+	sequences (brown).  Use a command like
+	<pre>    ../gmaj-ortho.sh human vervet orth_type annot_dir</pre>
+	where <code>orth_type</code> is either
+	<span class=pad>"<code class=nopad>context</code>"</span>,
+	<span class=pad>"<code class=nopad>content</code>"</span>, or
+	<span class=pad>"<code class=nopad>cage</code>"</span> (the latter
+	specifies the preliminary orthology calls made by the conversion pipeline's
+	CAGE program).  Orthology results by context (X-orthology) and by content
+	(N-orthology) are only
+	available for the reference species you specified when running
+	<code>ortho.sh</code>, but the CAGE calls are produced for all reference
+	species.  Again, if you don't specify an annotation directory, then
+	<code>fig_annot.d</code> is used by default (unless you only ran
+	<code>conversion.sh</code> instead of <code>ortho.sh</code>, in which case
+	<code>fig_annot.d</code> was not created, so <code>annot.d</code> is used).
+	<div><a name="underlays"></a></div>
+	<p class=small>
+	Gmaj can draw annotations on the alignment plots in the form of colored
+	background bands called <dfn>underlays</dfn>.  By default the CHAP scripts
+	build underlays for Gmaj automatically from your gene annotation files, but
+	you can override this by supplying your own underlay files (e.g. to include
+	items other than genes and exons).  These files must have names like
+	<code>human.underlays</code>, <code>vervet.underlays</code>, etc., and
+	follow the
+	<a href="http://globin.bx.psu.edu/dist/gmaj/gmaj_input.html#under"
+	>format</a> specified in the documentation for the
+	<a href="http://www.bx.psu.edu/miller_lab/">main release</a> of Gmaj
+	(except that a new color <code>PaleGray</code> has been added for CHAP).
+	You can put them either in the annotation directory you specify or in
+	<code>annot.d</code> (putting them in <code>fig_annot.d</code> is also
+	possible but not recommended because that directory is wiped out and
+	recreated each time <code>ortho.sh</code> is run).  Note that the default
+	underlays are placed in <code>temp_underlays.d</code>; this directory is
+	wiped out and recreated whenever the Gmaj scripts are run, but you can use
+	the files in it as examples or templates for making your own custom
+	underlay files.
+<li>	<b><code>gmaj-conv.sh</code></b>
+	<p class=small>
+	This script runs Gmaj to view the conversion calls for a particular
+	reference species and examine the evidence for them.  It has a number of
+	parameters available for customization, but only the reference species is
+	required.
+	<pre>    ../gmaj-conv.sh human annot_dir genomic_offset "title" exon_color</pre>
+	Examples:
+<pre>
+    ../gmaj-conv.sh human
+    ../gmaj-conv.sh human my_annot.d 31334805 "Conversions in the human CCL region" LightYellow
+    ../gmaj-conv.sh human "" 0 "" None
+</pre>
+	The parameters are position-dependent; if you want to keep the default
+	annotations, or if you do not want an offset or a title, then use
+	"", 0, and "" respectively to reach subsequent options.  As before, the
+	default annotation directory is <code>fig_annot.d</code> if it exists,
+	otherwise <code>annot.d</code>.  The <code>genomic_offset</code> is added
+	to all position labels in the reference sequence, so they can be displayed
+	with respect to e.g. the entire chromosome instead of the provided cluster
+	sequence.  The <code>title</code> is applied to the Gmaj window, and
+	<code>exon_color</code> is used for building default underlays if you
+	haven't supplied custom ones for a particular sequence (see the discussion
+	of underlay files <a href="#underlays">above</a>).  The list of
+	<a href="http://globin.bx.psu.edu/dist/gmaj/gmaj_input.html#color"
+	>valid underlay colors</a> is available in the documentation for the
+	<a href="http://www.bx.psu.edu/miller_lab/">main release</a> of Gmaj
+	(except that a new color <code>PaleGray</code> has been added for CHAP),
+	or you can specify
+	<span class=pad>"<code class=nopad>None</code>"</span> to have this script
+	suppress all underlays.  The default exon color is <code>LightGray</code>.
+<li>	<b><code>gc-info</code></b>
+	<p class=small>
+	This is a compiled C program located with the other binaries (by default
+	in the package's <code>bin</code> directory).  It computes some summary
+	statistics about the detected conversions in each of the species, and
+	prints them in a tab-separated format with column headers.
+	<pre>    ../bin/gc-info non-redundant.gc annot.d self.d</pre>
+<li>	<b><code>infer-annot.sh</code></b>
+	<p class=small>
+	This script aims to help you obtain estimated gene annotations for
+	non-reference species from those of a reference species, using the
+	<a href="http://www.ebi.ac.uk/Tools/Wise2/doc_wise2.html">Wise2</a>
+	software from EBI (<a href="#birney_2004">Birney et al. 2004</a>).
+	<p class=small>
+	First, download and install Wise2 according to the instructions that
+	come with it.  If the installed location is not in your command path,
+	modify the right-hand side of the line
+	<pre>    GENEWISE=genewise</pre>
+	near the start of CHAP's <code>infer-annot.sh</code> script to specify
+	the path for the <code>genewise</code> executable on your computer.
+	<p class=small>
+	Next, go to your cluster directory, create the <code>annot.d</code>
+	subdirectory, and put your annotation file for the reference species
+	in it (e.g. <code>human.codex</code>), as described in the
+	<a href="#prep">Data Preparation</a> section.  (You could use any
+	subdirectory name for this inference step, but it needs to be called
+	<code>annot.d</code> in order for the <code>ortho.sh</code> and
+	<code>conversion.sh</code> scripts to find it later.)  Put all of your
+	sequences in the <code>seq.d</code> directory as usual.
+	<p class=small>
+	Finally, from the cluster directory, run the command
+	<pre>    ../infer-annot.sh human annot.d</pre>
+	This will use the reference annotations to estimate gene and exon
+	locations for all of the other sequences that don't already have
+	annotation files, and put the new <code>*.codex</code> files in the same
+	directory (<code>annot.d</code>).  Of course, you may edit these as
+	desired before going on to run the
+	<code><a href="#orth">ortho.sh</a></code> or
+	<code><a href="#conv">conversion.sh</a></code> pipeline.
+<li>	<b><code>cleanout.sh</code></b>
+	<p class=small>
+	This script is provided to help clean up a specified cluster directory,
+	removing files and subdirectories added by the CHAP pipelines.  Any
+	material added by users to pipeline-created directories will be wiped out
+	when the directories are removed, but other user files will generally be
+	left alone.
+	<pre>    ../cleanout.sh cluster_dir clean_level refseq_name</pre>
+	<p class=small>
+	If you are already in the cluster directory to be cleaned, you can use
+	<span class=pad>"<code class=nopad>.</code>"</span> for that parameter.
+	The <code>clean_level</code> controls which files and directories are
+	removed, with higher values specifying increasingly thorough/drastic
+	cleanup, as follows.  They are cumulative, with each level including all
+	lower ones.
+	<p class=tiny>
+	<table class=sub>
+	<tbody>
+	<tr><td class=indent><code>0</code>:</td>
+	    <td>temporary scratch files normally deleted automatically by the
+	        pipelines; useful if a script did not finish due to an error
+	    </td></tr>
+	<tr><td class=indent><code>1</code>:</td>
+	    <td>additional intermediate output from pipeline programs (but
+	        final results and files needed by Gmaj and the figure generator
+	        are kept)
+	    </td></tr>
+	<tr><td class=indent><code>2</code>:</td>
+	    <td>result files for all reference sequences other than the specified one
+	    </td></tr>
+	<tr><td class=indent><code>3</code>:</td>
+	    <td>all output except RepeatMasker results and Gmaj user preferences;
+	        useful with the pipelines' <code>--no_rm</code> option to avoid
+	        the delay of re-masking
+	    </td></tr>
+	<tr><td class=indent><code>4</code>:</td>
+	    <td>all output; only the original user input should remain</td></tr>
+	</tbody>
+	</table>
+	<p class=tiny>
+	The <code>refseq_name</code> is only used for level 2.  It specifies the
+	reference sequence of the results you want to <em>keep</em>; others will
+	be discarded.
+	<p class=small>
+	Examples:
+<pre>
+    ../cleanout.sh . 1          # good for routine tidying
+    ../cleanout.sh . 2 human    # used on aglobin.example to save space
+</pre>
+	For details on exactly which files are deleted at which levels, please see
+	the comments for the variable assignments in the top section of the script.
+</ul>
+
+<!---->
+<!-- References -->
+<!---->
+
+<div><a name="refs"></a></div>
+<h2 class=nobottom>References</h2>
+<!-- kludge for link target spacing -->
+
+<p>
+<div><a name="birney_2004"></a></div>
+<p class=vlarge>
+Birney E, Clamp M, Durbin R&nbsp;
+(2004)&nbsp;
+<i>GeneWise and Genomewise.</i>&nbsp;
+Genome Res. 14:988.&nbsp;
+PubMed 15123596
+
+<div><a name="smit_2010"></a></div>
+<p>
+Smit AFA, Hubley R, Green P&nbsp;
+(1996-2010)&nbsp;
+<i>RepeatMasker Open-3.0.</i>&nbsp;
+Unpublished;&nbsp;
+<a href="http://www.repeatmasker.org/">http://www.repeatmasker.org</a>.
+
+<div><a name="song_2011"></a></div>
+<p>
+Song G, Hsu C-H, Riemer C, Zhang Y, Kim HL, Hoffmann F, Zhang L, Hardison RC,
+NISC Comparative Sequencing Program, Green ED, Miller W&nbsp;
+(2011)&nbsp;
+<i>Conversion events in gene clusters.</i>&nbsp;
+BMC Evol. Biol. 11:226.&nbsp;
+PubMed 21798034
+
+<div><a name="song_2012"></a></div>
+<p>
+Song G, Riemer C, Dickins B, Kim HL, Zhang L, Zhang Y, Hsu C-H, Hardison RC,
+NISC Comparative Sequencing Program, Green ED, Miller W&nbsp;
+(2012)&nbsp;
+<i>Revealing mammalian evolutionary relationships by comparative analysis of gene clusters.</i>&nbsp;
+To appear in Genome Biol. Evol.
+
+
+<p class=vvlarge>
+<hr>
+<p class=tiny>
+<em>March&nbsp; 2012</em>
+
+<p class=scrollspace>
+</body>
+</html>

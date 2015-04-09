@@ -1,0 +1,1 @@
+((((((((human,chimp),gibbon),(colobus,(vervet,baboon))),(dusky_titi,(marmoset,(owl_monkey,saimiri)))),(galago,mouse_lemur)),tree_shrew),cow),elephant);

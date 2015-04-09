@@ -1,0 +1,64 @@
+CAGE: Combinatorial Analysis of Gene-cluster Evolution 
+
+Inferring the Recent Duplication History of a Gene Cluster,
+Giltae Song, Louxin Zhang, Tomas Vinar, and Webb Miller,
+Proceedings of the 7th RECOMB International Satellite Workshop on 
+Comparative Genomics, RECOMB-CG 2009. Lecture Notes in Bioinformatics, vol 5817, pp 111-125.
+
+http://dx.doi.org/10.1007/978-3-642-04744-2_10
+
+This software provides a combinatorial analysis of gene cluster evolution.
+ generating an orthologous alignment in two species.
+
++---------------------------+
+| Installation Instructions |
++---------------------------+
+
+1) Our software can then be built with the command "make install".
+The binaries are installed into the current working directory.
+
++--------------------------+
+| Additional Configuration |
++--------------------------+
+
+1) Our software uses output from the lastz alignment program as
+well as output from RepeatMasker.  These are available at the
+following locations:
+
+	http://www.bx.psu.edu/miller_lab/
+	http://www.repeatmasker.org/
+
+2) Edit the top of the Makefile to set the locations of the lastz
+and RepeatMasker executables.  The lines you need to edit are shown
+below:
+
+	# locations of lastz and RepeatMasker
+	LASTZ        = lastz
+	REPEATMASKER = RepeatMasker
+
++--------------------+
+| Usage Instructions |
++--------------------+
+
+1) Input files
+	a) Sequence files in FASTA format 
+		 - Save the sequence files in a directory called "seq.d" 
+	b) The RepeatMasker out file of the information of interspersed repeats
+after	running RepeakMasker program: 
+		 - Copy "get_rm_out.sh" to the current working directory and type "get_rm_out.sh", then all sequences in seq.d are masked out. 
+		 - The masked-out sequences are placed in new_seq.d and the RepeatMasker output files in rm_out.d.
+
+2) Main program: Type "run_cage.sh"
+  a) Preprocessing Steps: 
+		 - running lastz and obtaining self alignments (and pairwise alignments if duplication histories of two sequences are inferred)
+		 - masking out spurious small tandem repeats which are not masked out yet by RepeatMasker program
+		 - chaining alignments together if they are broken by mutations and interspersed repeats
+	b) After the preprocessing steps run, a maf-format file "new.maf" is generated. In "new.maf", 'a' line in each local alignment is a percentage identity for each alignment. 
+
+3) Output files
+	- estimated orthologous alignments in maf format
+		e.g.) 
+
+4) Example
+	get_rm_out.sh
+	cage.sh

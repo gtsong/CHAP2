@@ -1,0 +1,238 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Examining the Orthology Results</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<link rel="stylesheet" type="text/css" href="chap.css">
+</head>
+<body>
+<p class=vvlarge>
+<h1>Examining the Orthology Results</h1>
+
+TABLE OF CONTENTS
+
+<p class=small>
+<ul class=notop>
+<li class=notop><a href="#intro">Introduction</a>
+<li class=notop><a href="#figs">Interpreting the PostScript Figures</a>
+<li class=notop><a href="#gmaj">Viewing the Orthology Mappings with Gmaj</a>
+<li class=notop><a href="#refs">References</a>
+</ul>
+<p class=vvlarge>
+
+<!---->
+<!-- Introduction -->
+<!---->
+
+<div><a name="intro"></a></div>
+<h2>Introduction</h2>
+
+<p>
+This document gives a brief illustration of how to examine the output from
+the orthology mapping pipeline in CHAP 2, the second version of the Cluster
+History Analysis Package.  This pipeline is described in
+<a href="#song_2012">Song et al. (2012)</a>, and the software package is
+freely available from the <a href="http://www.bx.psu.edu/miller_lab/"
+>Miller Lab</a> at Penn State.  Here we use the sample results for the
+alpha-globin cluster, with human as the reference sequence, that are included
+in the package's <code>aglobin.example</code> directory.  To run the pipeline
+on your own data, please follow the instructions in the main
+<a href="../README.html">README</a> file.
+
+<!---->
+<!-- Interpreting the PostScript Figures -->
+<!---->
+
+<div><a name="figs"></a></div>
+<h2>Interpreting the PostScript Figures</h2>
+
+<p>
+When you run the <code>ortho.sh</code> script, the pipeline generates two
+PostScript figures, which are placed in the <code>figures.d</code> subdirectory
+of your cluster directory.  These diagrams depict the orthologous relationships
+of the genes in each non-reference species to those in the reference, using the
+paradigms of <dfn>X-orthology</dfn> (based on genomic conte<u><i>x</i></u>t)
+and <dfn>N-orthology</dfn> (based on sequence conte<u><i>n</i></u>t),
+respectively.  The two paradigms are distinguished by their treatment of
+conversion events: X-orthology explicitly disregards their effects, while
+N-orthology follows them back when tracing the origin of a sequence segment
+(<a href="#song_2012">Song et al. 2012</a>).  Both require accurate
+identification of conversions.
+
+<p>
+<table class=figure align=center><col width="0*"><tbody><tr><td>
+<img src="ortho.images/alpha_ortho_comparison.800X450.png" alt="Figure 1">
+<table class=legend1 align=center><tr><td>
+<table class=legend2 align=center><tr><td>
+<span class=figno>Figure 1.</span> Orthology structure diagrams showing
+pairwise relationships between genes in human and 14 other species in the
+alpha-globin cluster, automatically inferred and visualized by our pipeline
+for (A) X-orthology and (B) N-orthology.
+</td></tr></table>
+</td></tr></table>
+</td></tr></tbody></table>
+
+<p>
+The colored boxes represent genes; those with dashed borders are pseudogenes.
+The first row is the specified reference species, in this case human.  Its
+genes are labeled, and each has been assigned a unique color which is used to
+represent the orthologous relationships with the other sequences.  Thus the
+colors in each non-human gene indicate its human orthologs.  Note that the
+entire diagram is reference-specific; it generally does not say anything about
+relationships between the non-reference species.
+
+<p>
+Genes (or portions of genes) having multiple human orthologs are split
+vertically (i.e., using stacked colors).  This can happen if there is a
+post-speciation duplication event in the reference sequence, so that both
+the original and newly duplicated genes in the reference are orthologous to
+the one in the non-reference sequence.  For example, in Figure 1A for
+X-orthology, we see that the fifth gene in galago has orange and turquoise
+vertical sections, indicating that it is orthologous to two human genes:
+<i>HBA-T2</i> and <i>HBA-T3</i>.  Genes in mouse lemur and more distant species
+also show the same one-to-many relationship as the galago gene, but the simians
+do not, suggesting that the duplication likely occurred in the simian ancestor.
+Vertical splits can also be caused by conversion events.  Note that the
+diagrams only show the inferred orthology relationships among the genes, not
+the reasons for those relationships; in general additional investigation is
+necessary to identify the evolutionary history leading to a particular
+situation.  Vertical ordering of colors within the stack is not significant.
+
+<p>
+Horizontal partitions are used when parts of a gene differ in their orthology.
+For instance, the first baboon gene in Figure 1B is partitioned into two pieces
+horizontally: the leftmost part is mapped to <i>HBZ-T1</i> (blue) while the
+rightmost part is orthologous to both <i>HBZ-T1</i> (blue) and <i>HBZ-T2</i>
+(pink).  In this case the horizontal partitioning is due to a post-speciation
+conversion in the baboon sequence (where part of the second gene was copied
+over the first), and the vertical partitions are due to a post-speciation
+conversion in the human sequence.  Again, these causes are not necessarily
+evident from the figure; further investigation was needed.
+
+<p>
+A gray color marks a gene (or portion of one) whose orthology could not be
+assigned by the pipeline.  For instance, when a gene in a non-reference
+species is lost in the reference species, then it has no ortholog there.
+Conversion events may also result in gray sections for N-orthology, since a
+conversion in the reference lineage effectively deletes the content of the
+target region (unless it was preserved elsewhere by an earlier duplication or
+conversion).  Sequencing errors, alignment errors, and false positive results
+from our conversion detector can also lead to unassignable regions.  In
+Figure 1A, the second gene of colobus is unassigned because a false conversion
+call caused a post-speciation tandem duplication in the colobus <i>HBZ-T2</i>
+gene to be treated as older.
+
+<p>
+Note that the lengths of boxes, spaces, and horizontal partitions are not
+proportional to their actual genomic lengths, but the order is the same as
+their genomic order.
+
+<!---->
+<!-- Viewing the Orthology Mappings with Gmaj -->
+<!---->
+
+<div><a name="gmaj"></a></div>
+<h2>Viewing the Orthology Mappings with Gmaj</h2>
+
+<p>
+Gmaj is a general-purpose interactive viewer for multiple-sequence alignments
+in <a href="http://genome.ucsc.edu/FAQ/FAQformat">MAF</a> format, but it has
+recently been extended with special features to support analysis of gene cluster
+evolution.  For basic information about using Gmaj, see the documentation for
+its current <a href="http://www.bx.psu.edu/miller_lab/">main release</a>, which
+is rather old but still mostly applicable.
+
+<p>
+CHAP 2 includes a Unix/Linux shell script called <code>gmaj-ortho.sh</code> for
+invoking Gmaj to examine the orthologous alignments that were identified by the
+pipeline.  It displays the many-to-many ortholog calls for a selected pair of
+species, simultaneously with the full chained pairwise alignments.
+
+<p>
+To view the X-orthology calls between e.g. human and vervet, run the script as
+follows:
+<pre>
+    cd aglobin.example
+    ../gmaj-ortho.sh human vervet context
+</pre>
+
+<p>
+This should produce a window similar to Figure 2, showing two different
+alignment sets simultaneously on the same pip and dotplot: the full chained
+pairwise alignments of the specified sequences (brown), with the subset
+identified as many-to-many X-orthologs drawn on top (black).  Note that
+unlike the PostScript diagrams in Figure 1, the orthology calls depicted
+here are not limited to genes.
+
+<p>
+<table class=figure align=center><col width="0*"><tbody><tr><td>
+<img src="ortho.images/human_vervet_context_ortho.800X450.png" alt="Figure 2">
+<table class=legend1 align=center><tr><td>
+<table class=legend2 align=center><tr><td>
+<span class=figno>Figure 2.</span> Illustration of X-orthologous alignments
+(black) between human and vervet in the alpha-globin cluster.
+</td></tr></table>
+</td></tr></table>
+</td></tr></tbody></table>
+
+<p>
+To view the N-orthology calls, run the script as follows:
+<pre>
+    cd aglobin.example
+    ../gmaj-ortho.sh human vervet content
+</pre>
+
+<p>
+The many-to-many N-orthologs are drawn on top (black) as a subset of the full
+chained pairwise alignments of the specified sequences (brown), as in Figure 3.
+For this particular cluster, we see that more of the alignments are called as
+orthologous using the N-orthology method than with the X-orthology approach.
+
+<p>
+<table class=figure align=center><col width="0*"><tbody><tr><td>
+<img src="ortho.images/human_vervet_content_ortho.800X450.png" alt="Figure 3">
+<table class=legend1 align=center><tr><td>
+<table class=legend2 align=center><tr><td>
+<span class=figno>Figure 3.</span> Illustration of N-orthologous alignments
+(black) between human and vervet in the alpha-globin cluster.
+</td></tr></table>
+</td></tr></table>
+</td></tr></tbody></table>
+
+<p>
+You may notice that one of the items you have seen on the Options menu,
+"Gene Conversion Info", is not available; this is because Gmaj is not in
+gene conversion mode.  Currently Gmaj can either show how the orthologs were
+called (via the <code>gmaj-ortho.sh</code> command discussed here) or how the
+conversions were called (via the <code>gmaj-conv.sh</code> command discussed in
+<a href="gmaj_geneconv.html">gmaj_geneconv.html</a>), but not both.  You can,
+however, run both commands in separate windows to see them at the same time.
+
+<!---->
+<!-- References -->
+<!---->
+
+<div><a name="refs"></a></div>
+<h2 class=nobottom>References</h2>
+<!-- kludge for link target spacing -->
+
+<p>
+<div><a name="song_2012"></a></div>
+<p class=vlarge>
+Song G, Riemer C, Dickins B, Kim HL, Zhang L, Zhang Y, Hsu C-H, Hardison RC,
+NISC Comparative Sequencing Program, Green ED, Miller W&nbsp;
+(2012)&nbsp;
+<i>Revealing mammalian evolutionary relationships by comparative analysis of gene clusters.</i>&nbsp;
+To appear in Genome Biol. Evol.
+
+
+<p class=vvlarge>
+<hr>
+<p class=tiny>
+<em>March&nbsp; 2012</em>
+
+<p class=scrollspace>
+</body>
+</html>
