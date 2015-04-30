@@ -65,6 +65,9 @@ void read_maf(char *fname, int mode, struct DotList *algns, int *num_algns, int 
 
 	strcpy(name1, "");
 	strcpy(name2, "");
+	strcpy(len1, "0");
+	strcpy(len2, "0");
+	strcpy(strand, "+");
 	strcpy(token, "");
 
 	fp = ckopen(fname, "r");

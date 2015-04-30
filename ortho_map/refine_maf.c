@@ -167,6 +167,10 @@ int main(int argc, char **argv)
 	f = ckopen(argv[2], "r");
 
   for( i = 0; i < (*num_position); i++ ) {      
+		position_ortho[i].fid =  position_ortho[i].indiv_fid;
+	}
+
+  for( i = 0; i < (*num_position); i++ ) {      
 		if( position_ortho[i].sign != DELETED) {
       total_len = total_len + width(position_ortho[i].x);
       avg_pid = avg_pid + (float)(((float)position_ortho[i].identity/(float)100) * width(position_ortho[i].x));      
@@ -202,6 +206,8 @@ int main(int argc, char **argv)
   update_pid_init_algns(*num_position, position_ortho, f, avg_pid);
 	const_graph(*num_position, position_ortho, f);
 
+	total_len = 0;
+	avg_pid = (float)0;
   for( i = 0; i < (*num_position); i++ ) {      
 		if( position_ortho[i].sign != DELETED) {
       total_len = total_len + width(position_ortho[i].x);

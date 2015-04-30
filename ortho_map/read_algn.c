@@ -15,11 +15,11 @@ void get_nth_algn(char *seq1, char *seq2, int id, int b, FILE *fp, struct b_list
 {
 	int i = 0;
 	char *status;
-	int b1, e1, b2, e2;
+	int b1 = 0, e1 = 0, b2 = 0, e2 = 0;
 	char strand[100], len1[100], len2[100];
 	int *beg, *count;
 	bool is_found = false;
-	int pid;
+	int pid = 0;
 
 	beg = (int *) ckalloc(sizeof(int));
 	count = (int *) ckalloc(sizeof(int));
@@ -56,6 +56,9 @@ void get_nth_algn(char *seq1, char *seq2, int id, int b, FILE *fp, struct b_list
     if((fgets(S, BIG, fp) == NULL) || (fgets(T, BIG, fp) == NULL))
       fatal("cannot find alignment");
 
+		strcpy(strand, "+");
+		strcpy(len1, "0");
+		memcpy(len2, "0", 100);
     if ((sscanf(S, "%*s %*s %d %d %*s %s", &b1, &e1, len1) != 3) || (sscanf(T, "%*s %*s %d %d %s %s", &b2, &e2, strand, len2) != 4))
 		{
 			fatal("bad alignment info");
@@ -122,7 +125,11 @@ void get_nth_algn(char *seq1, char *seq2, int id, int b, FILE *fp, struct b_list
 	seq2[BIG-1]='\0';
 	free(count);
 	free(beg);
-	if( is_found == false ) fatalf("%d th alignment does not exist\n", id);
+
+	if( is_found == false ) {
+		fatalf("%d th alignment does not exist\n", id);
+	}
+
 }
 
 char *nucs_b(char *x, int b, int *beg) {
@@ -463,7 +470,7 @@ int find_yloc_one_ch(struct DotList *init_dots, struct DotList algn, FILE *fp, i
 			res = find_yloc_one(init_dots[mid], fp, cur_offset, flag);
 		}	
 		else {
-			cur_offset = init_dots[old_id].x.upper - init_dots[mid].xr_offset - init_dots[old_id].x.lower + init_dots[old_id].xl_offset - offset;
+			cur_offset = init_dots[old_id].x.upper - init_dots[old_id].xr_offset - init_dots[old_id].x.lower + init_dots[old_id].xl_offset - offset;
 			res = find_yloc_one(init_dots[old_id], fp, cur_offset, flag);
 		}
 	}

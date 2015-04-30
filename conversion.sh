@@ -36,7 +36,7 @@ SCRIPT=`echo $0 | sed -e 's;.*/;;'`     # script name from command line; path re
 
 # ---- get arguments and check tree ----
 
-if [ $# -ne 1 ] && [ $# -ne 2 ]
+if [ $# -ne 1 ] && [ $# -ne 2 ] && [ $# -ne 3 ]
 then
 	echo "Usage:  $SCRIPT species_tree_file [--no_rm]"
 	exit 1
@@ -56,7 +56,7 @@ $BIN/check_species_tree $1 $TEMP/all_species.txt
 # ---- make working copies of sequence files, and run RepeatMasker ----
 # sequence names in each alignment block are formed as $(species name).$(contig name) for multiple contigs
 
-if [ $# -eq 1 ]
+if [ $# -eq 1 ] || [[ $# -eq 2 && $2 = "--distant" ]]
 then
 	rm -rf $MASK_SEQ; mkdir -p $MASK_SEQ
 	rm -rf $RM_OUT;   mkdir -p $RM_OUT
@@ -98,7 +98,7 @@ then
 
 		cp $TEMP/$sp.out $RM_OUT/$sp.out
 	done
-elif [ $2 = "--no_rm" ]
+elif [ $2 = "--no_rm" ] || [[ $# -eq 3 && $3 = "--no_rm" ]]
 then
 	for sp in `ls $USER_SEQ`
 	do
@@ -145,11 +145,22 @@ do
 		then
 			rm -rf $TEMP; mkdir -p $TEMP
 			num_contigs=`cat $MASK_SEQ/$sp1 | grep ">" | wc -l`
+			if [ $# -eq 1 ] 
+			then
+				y_drop=3400
+			elif [ $2 = "--distant" ] || [[ $# -eq 3 && $3 = "--distant" ]]
+			then
+				y_drop=5300
+			else
+				y_drop=3400
+			fi
+
 			if [ "$num_contigs" -le 1 ] 
 			then
-				$BIN/lastz T=2 Y=3400 $MASK_SEQ/$sp1 $MASK_SEQ/$sp2 --ambiguous=iupac --format=maf > $CAGE_PAIR/$sp1.$sp2.maf
+				#BIN/lastz T=2 Y=3400 $MASK_SEQ/$sp1 $MASK_SEQ/$sp2 --ambiguous=iupac --format=maf > $CAGE_PAIR/$sp1.$sp2.maf
+				$BIN/lastz T=2 Y=$y_drop $MASK_SEQ/$sp1 $MASK_SEQ/$sp2 --ambiguous=iupac --format=maf > $CAGE_PAIR/$sp1.$sp2.maf
 			else
-				$BIN/lastz T=2 Y=3400 $MASK_SEQ/$sp1[multiple] $MASK_SEQ/$sp2 --ambiguous=iupac --format=maf > $CAGE_PAIR/$sp1.$sp2.maf
+				$BIN/lastz T=2 Y=$y_drop $MASK_SEQ/$sp1[multiple] $MASK_SEQ/$sp2 --ambiguous=iupac --format=maf > $CAGE_PAIR/$sp1.$sp2.maf
 			fi
 
 			$BIN/cage_mask $CAGE_SELF/$sp1.maf $CAGE_PAIR/$sp1.$sp2.maf $TEMP/a.maf $TEMP/ab_new.maf 1

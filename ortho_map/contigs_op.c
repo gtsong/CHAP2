@@ -7,16 +7,19 @@
 void merge_sep_contigs(struct DotList *algns, int num_algns, struct n_pair **contigs1, int *num_contigs1, int *num_alloc1, int **len_sum1, struct n_pair **contigs2, int *num_contigs2, int *num_alloc2, int **len_sum2)
 {
 	int i = 0, j = 0, id = -1;
-	char name[LEN_NAME], sp_name[LEN_NAME], ctg_name[LEN_NAME];
+	char *name, *sp_name, *ctg_name;
 	int num1 = 0, num2 = 0;
-	strcpy(name, "");
-	strcpy(sp_name, "");
-	strcpy(ctg_name, "");
 
 	num1 = *num_contigs1;
 	num2 = *num_contigs2;
 
+	name = (char *) ckalloc(LEN_NAME * sizeof(char));
+	sp_name = (char *) ckalloc(LEN_NAME * sizeof(char));
+	ctg_name = (char *) ckalloc(LEN_NAME * sizeof(char));
 	for( i = 0; i < num_algns; i++ ) {
+		strcpy(name, "");
+		strcpy(sp_name, "");
+		strcpy(ctg_name, "");
 		strcpy(name, algns[i].name1);
 		concat_ctg_name(name, sp_name, ctg_name);
 		id = add_ctg_name(algns[i].index, sp_name, ctg_name, algns[i].len1, *contigs1, num1);
@@ -60,6 +63,9 @@ void merge_sep_contigs(struct DotList *algns, int num_algns, struct n_pair **con
 
 	*num_contigs1 = num1;
 	*num_contigs2 = num2;
+	free(name);
+	free(ctg_name);
+	free(sp_name);
 }
 
 int add_ctg_name(int id, char *sp_name, char *ctg_name, int len, struct n_pair *pairs, int num_pairs)

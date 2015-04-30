@@ -772,7 +772,8 @@ void rollback_init_dots(struct DotList *algns, int id, bool is_x, int num_algns,
 		tmp_id = algns[i].index;
 		is_skip = false;
 		if((i != id) && is_tandem(algns[id]) && is_tandem(algns[i])) {
-			if(f_loose_subset(algns[i].x, to, LOOSE) || f_loose_subset(algns[i].y, to, LOOSE)) {
+//			if(f_loose_subset(algns[i].x, to, LOOSE) || f_loose_subset(algns[i].y, to, LOOSE)) { /* Apr 23, 2015
+			if(((is_x == true ) && f_loose_subset(algns[i].x, to, LOOSE)) || ((is_x == false) && f_loose_subset(algns[i].y, to, LOOSE))) {
 				is_skip = true;
 			}
 		}

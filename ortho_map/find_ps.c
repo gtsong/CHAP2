@@ -279,9 +279,9 @@ bool is_genes_included(struct I temp_reg, char cur_sign, struct exons_list *gene
 	bool res = false;
 
 	for( i = from; i <= to; i++ ) {
-		if( (cur_sign == genes[i].sign) && ((subset(genes[i].reg, temp_reg) == true) || (subset(temp_reg, genes[i].reg) == true))) {
+		if( (cur_sign == genes[i].sign) && ((strict_subset(genes[i].reg, temp_reg) == true) || (strict_subset(temp_reg, genes[i].reg) == true))) {
 			if( strstr(genes[i].name, "_ps") != NULL ) {
-				if( subset(genes[i].reg, temp_reg) == true ) {
+				if( strict_subset(genes[i].reg, temp_reg) == true ) {
 					genes[i].reg = assign_I(temp_reg.lower, temp_reg.upper);
 				}
 			}

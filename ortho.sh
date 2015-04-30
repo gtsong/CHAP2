@@ -29,9 +29,9 @@ ORTHO_X2=$TEMP/x-pre2.d
 ORTHO_N1=$TEMP/n-pre.d
 SCRIPT=`echo $0 | sed -e 's;.*/;;'`       # script name from command line; path removed for msgs
 
-if [ $# -ne 2 ] && [ $# -ne 3 ]
+if [ $# -ne 2 ] && [ $# -ne 3 ] && [ $# -ne 4 ]
 then
-	echo "Usage:  $SCRIPT species_tree_file refseq_name [--no_rm]"
+	echo "Usage:  $SCRIPT species_tree_file refseq_name [--no_rm] [--distant]"
 	exit 1
 else
 	ref_sp=$2
@@ -93,9 +93,18 @@ then
 	echo
 fi
 
-if [ $# -eq 3 ] && [ $3 = "--no_rm" ]
+if [ $# -eq 4 ] && [ $3 = "--no_rm" ] && [ $4 = "--distant" ]
+then
+	$CONV_SCRIPT $1 --no_rm --distant
+elif [ $# -eq 4 ] && [ $4 = "--no_rm" ] && [ $3 = "--distant" ]
+then
+	$CONV_SCRIPT $1 --no_rm --distant
+elif [ $# -eq 3 ] && [ $3 = "--no_rm" ]
 then
 	$CONV_SCRIPT $1 --no_rm
+elif [ $# -eq 3 ] && [ $3 = "--distant" ]
+then
+	$CONV_SCRIPT $1 --distant
 else
 	$CONV_SCRIPT $1
 fi
@@ -147,8 +156,8 @@ rm -rf $ORTHO_X2; mkdir -p $ORTHO_X2
 i=0
 for sp1 in `ls $USER_SEQ`
 do
-	echo "adjusting orthology for $sp1"
 	j=0
+	echo "adjusting orthology for $sp1"
 	for sp2 in `ls $USER_SEQ`
 	do
 		if [ $j -gt $i ]
@@ -194,7 +203,7 @@ do
 	then
 		echo $line >> $ORTHO_EVENTS/$ref_sp.events
 	else
-		echo $line | cut -d ' ' -f1-5,8 >> $ORTHO_EVENTS/$ref_sp.events
+		echo $line | cut -d ' ' -f1-7,10 >> $ORTHO_EVENTS/$ref_sp.events
 	fi
 done
 

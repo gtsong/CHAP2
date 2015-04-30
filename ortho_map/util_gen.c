@@ -1207,21 +1207,24 @@ int search_range_b(struct slist *sorted, struct DotList *algns, int num_algns,  
 	int res;
 	int i, cur;
 
-	i = 0;
-	cur = sorted[i].id;
-
-	if(mode == SELF1) val = assign_I(algns[cur].x.lower, algns[cur].x.upper);
-	else if(mode == SELF2) val = assign_I(algns[cur].y.lower, algns[cur].y.upper);
-
-	while( ((i+1) < num_algns) && (val.upper < query) ) {
-		i++;
+	if( num_algns > 0 ) {
+		i = 0;
 		cur = sorted[i].id;
+	
 		if(mode == SELF1) val = assign_I(algns[cur].x.lower, algns[cur].x.upper);
 		else if(mode == SELF2) val = assign_I(algns[cur].y.lower, algns[cur].y.upper);
-	}
 
-	if( i >= (num_algns-1)) res = num_algns-1;
-	else res = i;	
+		while( ((i+1) < num_algns) && (val.upper < query) ) {
+			i++;
+			cur = sorted[i].id;
+			if(mode == SELF1) val = assign_I(algns[cur].x.lower, algns[cur].x.upper);
+			else if(mode == SELF2) val = assign_I(algns[cur].y.lower, algns[cur].y.upper);
+		}
+
+		if( i >= (num_algns-1)) res = num_algns-1;
+		else res = i;	
+	}
+	else res = 0;
 		
 	return(res);
 }
@@ -1232,22 +1235,24 @@ int search_range_e(struct slist *sorted, struct DotList *algns, int num_algns,  
 	int res;
 	int i, cur;
 
-	i = 0;
-	cur = sorted[i].id;
-
-	if(mode == SELF1) val = assign_I(algns[cur].x.lower, algns[cur].x.upper);
-	else if(mode == SELF2) val = assign_I(algns[cur].y.lower, algns[cur].y.upper);
-
-	while( ((i+1) < num_algns) && (val.lower <= query) ) {
-		i++;
+	if( num_algns > 0 ) {
+		i = 0;
 		cur = sorted[i].id;
+
 		if(mode == SELF1) val = assign_I(algns[cur].x.lower, algns[cur].x.upper);
 		else if(mode == SELF2) val = assign_I(algns[cur].y.lower, algns[cur].y.upper);
-	}
 
-	if( i >= (num_algns-1)) res = num_algns-1;
-	else res = i;	
-		
+		while( ((i+1) < num_algns) && (val.lower <= query) ) {
+			i++;
+			cur = sorted[i].id;
+			if(mode == SELF1) val = assign_I(algns[cur].x.lower, algns[cur].x.upper);
+			else if(mode == SELF2) val = assign_I(algns[cur].y.lower, algns[cur].y.upper);
+		}
+
+		if( i >= (num_algns-1)) res = num_algns-1;
+		else res = i;	
+	}
+	else res = 0;
 	return(res);
 }
 

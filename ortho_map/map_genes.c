@@ -7,6 +7,8 @@
 #include "id_ortho_conv.h"
 #include "regions.h"
 
+#define MAP_ERR_TH 305
+
 void map_genes(struct DotList *algns, int num_algns, struct exons_list *exons1, int num_exons1, struct exons_list *genes1, int num_genes1, struct exons_list *genes2, int num_genes2, FILE *f)
 {
 	int i = 0, j = 0, k = 0;
@@ -178,7 +180,7 @@ void map_genes_partition(struct DotList *algns, int num_algns, struct exons_list
 			temp_reg = assign_I(0, 1);
 	    *res_b = -1;
  		  *res_e = -1;
-    	if((proper_overlap(algns[k].y, cur_reg) == true) && (width(intersect(algns[k].y, cur_reg)) >= ERR_TH)) {
+    	if((proper_overlap(algns[k].y, cur_reg) == true) && (width(intersect(algns[k].y, cur_reg)) >= MAP_ERR_TH)) {
 				temp_reg = intersect(algns[k].y, cur_reg);
         find_overlapping_ends(cur_reg, algns[k].y, SELF2, algns, k, f, res_b, res_e);
         if(((*res_b) != -1) && ((*res_e) != -1) && ((*res_b) < (*res_e) )) {
@@ -196,7 +198,7 @@ void map_genes_partition(struct DotList *algns, int num_algns, struct exons_list
 							}
 						}
 
-						if( (index > 0 ) && (prev_index != -1) && ((algns[k].y.lower - parts[prev_index].reg.upper) <= 3*ERR_TH )) {
+						if( (index > 0 ) && (prev_index != -1) && ((algns[k].y.lower - parts[prev_index].reg.upper) <= 3*MAP_ERR_TH )) {
 							if( algns[k].y.lower < parts[prev_index].reg.lower ) {
 								lo = algns[k].y.lower;
 							}
@@ -236,7 +238,7 @@ void map_genes_partition(struct DotList *algns, int num_algns, struct exons_list
 		
 			num_par = 0;
 			for(n = 0; n < (2*num_bp-1); n++) {
-				if( (bp[n+1]-bp[n]) > ERR_TH ) {
+				if( (bp[n+1]-bp[n]) > MAP_ERR_TH ) {
 					temp_reg = assign_I(bp[n], bp[n+1]-1);
 
 					for( j = 0; j < index; j++ ) {
@@ -252,7 +254,7 @@ void map_genes_partition(struct DotList *algns, int num_algns, struct exons_list
 		if( num_par > 0 ) {
 			count = 0;
 			for(n = 0; n < (2*num_bp-1); n++) {
-				if( (bp[n+1]-bp[n]) > ERR_TH ) {
+				if( (bp[n+1]-bp[n]) > MAP_ERR_TH ) {
 					temp_reg = assign_I(bp[n], bp[n+1]-1);
 
 					k = 0;
@@ -288,7 +290,7 @@ void map_genes_partition(struct DotList *algns, int num_algns, struct exons_list
 						count++;
 					}
 					else {
-						if( width(cur_reg) <= 3*ERR_TH ) {}
+						if( width(cur_reg) <= 3*MAP_ERR_TH ) {}
 						else {
 							if( is_ps_marked == false ) {
 								if( strstr(genes2[i].name, "_ps") != NULL ) {

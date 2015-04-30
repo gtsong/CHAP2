@@ -46,7 +46,7 @@ int main(int argc, char **argv)
 	int *num_contigs1, *num_contigs2;
 	int *len_sum1, *len_sum2;
 	int *num_alloc1, *num_alloc2; 
-	char name1[LEN_NAME], name2[LEN_NAME];
+	char *name1, *name2;
 	int len1 = 0, len2 = 0;
 	int num_org1 = 0, num_org2 = 0;
 	char buf[1000];
@@ -61,6 +61,12 @@ int main(int argc, char **argv)
 	num_contigs2 = (int *) ckalloc(sizeof(int));
 	num_alloc1 = (int *) ckalloc(sizeof(int));
 	num_alloc2 = (int *) ckalloc(sizeof(int));
+	name1 = (char *) ckalloc(LEN_NAME * sizeof(char));
+	name2 = (char *) ckalloc(LEN_NAME * sizeof(char));
+	*num_contigs1 = 0;
+	*num_contigs2 = 0;
+	*num_alloc1 = 0;
+	*num_alloc2 = 0;
 
 	if( argc == 9 ) {
 		if( (fp = ckopen(argv[7], "r")) == NULL ) {
@@ -71,16 +77,26 @@ int main(int argc, char **argv)
 			contigs1 = (struct n_pair *) ckalloc(sizeof(struct n_pair) * (count+1));
 			len_sum1 = (int *) ckalloc(sizeof(int) * (count+1));
 			init_n_pair(contigs1, 0, count);
-			for( i = 0; i < (count+1); i++ ) len_sum1[i] = 0;
+			for( i = 0; i < (count+1); i++ ) {
+				len_sum1[i] = 0;
+				strcpy(contigs1[i].name1, "");
+				strcpy(contigs1[i].name2, "");
+			}
 			i = 0;
 			fseek(fp, 0, SEEK_SET);
 			while( fgets(buf, 1000, fp) ) {
 				if( i >= count ) {
 					fatalf("counting error in %s\n", argv[7]);
 				}
-				sscanf(buf, "%s %s %d %d", name1, name2, &len1, &len2);	
-				strcpy(contigs1[i].name1, name1);
-				strcpy(contigs1[i].name2, name2);
+
+				memcpy(name1, "", LEN_NAME);
+				memcpy(name2, "", LEN_NAME);
+				if( sscanf(buf, "%s %s %d %d", name1, name2, &len1, &len2) != 4) {
+					fatalf("invalid line in contigs file: %s\n", buf);
+				}	
+				
+				memcpy(contigs1[i].name1, name1, LEN_NAME);
+				memcpy(contigs1[i].name2, name2, LEN_NAME);
 				contigs1[i].len = len1;
 				contigs1[i].id = i;
 				len_sum1[i] = len2;
@@ -107,9 +123,12 @@ int main(int argc, char **argv)
 				if( i >= count ) {
 					fatalf("counting error in %s \n", argv[8]);
 				}
+
+				memcpy(name1, "", LEN_NAME);
+				memcpy(name2, "", LEN_NAME);
 				sscanf(buf, "%s %s %d %d", name1, name2, &len1, &len2);	
-				strcpy(contigs2[i].name1, name1);
-				strcpy(contigs2[i].name2, name2);
+				memcpy(contigs2[i].name1, name1, LEN_NAME);
+				memcpy(contigs2[i].name2, name2, LEN_NAME);
 				contigs2[i].len = len1;
 				contigs2[i].id = i;
 				len_sum2[i] = len2;
@@ -143,6 +162,9 @@ int main(int argc, char **argv)
 		num_org2 = 0;
 	}
 
+
+	free(name1);
+	free(name2);
 	size1 = (int *) ckalloc(sizeof(int));
 	size2 = (int *) ckalloc(sizeof(int));
 	num_ortho = (int *) ckalloc(sizeof(int));
@@ -168,6 +190,10 @@ int main(int argc, char **argv)
 		  read_maf(argv[1], O_MODE, ortho_algns, num_ortho, size1, size2);
 		}
 	}
+	else {
+		ortho_algns = (struct DotList *) ckalloc(sizeof(struct DotList));
+		initialize_algns(ortho_algns, 0, 1);
+	}
 
 	if( count != (*num_ortho) ) {
 		fatalf("counting error 1: %d vs. %d\n", count, *num_ortho);
@@ -184,6 +210,10 @@ int main(int argc, char **argv)
 		else if( (ortho_mode == ORTHO_CONTENT) || (ortho_mode == ORTHO_POSITION) ) {
 	 		read_maf(argv[2], O_MODE, symm_ortho_algns, num_symm_ortho, size1, size2);
 		}
+	}
+	else {
+		symm_ortho_algns = (struct DotList *) ckalloc(sizeof(struct DotList));
+		initialize_algns(symm_ortho_algns, 0, 1);
 	}
 
 	if( count != (*num_symm_ortho) ) {
@@ -225,6 +255,10 @@ int main(int argc, char **argv)
 			adjust_algn_diff(ortho_algns, *num_ortho, algns, *num_algns);
 		}
 	}
+	else {
+		algns = (struct DotList *) ckalloc(sizeof(struct DotList));
+		initialize_algns(algns, 0, 1);
+	}
 
 	if( count != (*num_algns) ) {
 		fatalf("counting error 3: %d vs. %d\n", count, *num_algns);
@@ -242,6 +276,10 @@ int main(int argc, char **argv)
 		if( (ortho_mode == ORTHO_CONTENT) || (ortho_mode == ORTHO_POSITION)) {
 			adjust_algn_diff(symm_ortho_algns, *num_symm_ortho, symm_algns, *num_symm);
 		}
+	}
+	else {
+		symm_algns = (struct DotList *) ckalloc(sizeof(struct DotList));
+		initialize_algns(symm_algns, 0, 1);
 	}
 
 	if( count != (*num_symm) ) {
@@ -264,8 +302,13 @@ int main(int argc, char **argv)
 		g = ckopen(argv[4], "r");
 	}
 
-	make_symmetry(&ortho_algns, num_ortho, &symm_ortho_algns, num_symm_ortho, symm_algns, num_symm, ortho_mode, f, g, avg_pid); // if ortho_mode == ORTHO_CONTENT, this function adds some alignments to symm_ortho_algns and cuts other alignments from ortho_algns
-	make_symmetry(&symm_ortho_algns, num_symm_ortho, &ortho_algns, num_ortho, algns, num_algns, ortho_mode, g, f, avg_pid);
+//	if( (*num_symm_ortho) > 0 ) {
+		make_symmetry(&ortho_algns, num_ortho, &symm_ortho_algns, num_symm_ortho, symm_algns, num_symm, ortho_mode, f, g, avg_pid); // if ortho_mode == ORTHO_CONTENT, this function adds some alignments to symm_ortho_algns and cuts other alignments from ortho_algns
+//	}
+
+//	if( (*num_ortho) > 0 ) {
+		make_symmetry(&symm_ortho_algns, num_symm_ortho, &ortho_algns, num_ortho, algns, num_algns, ortho_mode, g, f, avg_pid);
+//	}
 
 	for( i = 0; i < (*num_ortho); i++ ) {
 		ortho_algns[i].sp_id = PAIR;
@@ -314,6 +357,7 @@ int main(int argc, char **argv)
 		free(len_sum2);
 	}
 
+/*
 	if( (*num_algns) > 0 ) {
 		free(algns);
 	}
@@ -329,6 +373,12 @@ int main(int argc, char **argv)
 	if( (*num_ortho) > 0 ) {
 		free(ortho_algns);
 	}
+*/
+	
+	free(algns);
+	free(symm_ortho_algns);
+	free(symm_algns);
+	free(ortho_algns);
 
 	free(num_alloc1);
 	free(num_alloc2);
@@ -361,13 +411,17 @@ void make_symmetry(struct DotList **ortho_algns, int *num_ortho, struct DotList 
 	num3 = *num_symm;
 	org_num1 = num1;
 	
+	if( num1 <= 0 ) num1 = 1;
+	if( num2 <= 0 ) num2 = 1;
+	if( num3 <= 0 ) num3 = 1;
+
 	st1 = (struct slist *) ckalloc(num1 * sizeof(struct slist));
 	st2 = (struct slist *) ckalloc(num2 * sizeof(struct slist));
 
 	list = (struct short_alist *) ckalloc(num2 * sizeof(struct short_alist));
 	add_list = (struct short_alist *) ckalloc(num2 * sizeof(struct short_alist));
 	cut_list = (struct short_alist *) ckalloc(num2 * sizeof(struct short_alist));
-	added_algns = (struct DotList *) ckalloc(num1 * sizeof(struct DotList));
+	added_algns = (struct DotList *) ckalloc((num1+num2) * sizeof(struct DotList));
 	
 	temp_list.id = -1;
 	temp_list.x = assign_I(0,1);
@@ -377,7 +431,7 @@ void make_symmetry(struct DotList **ortho_algns, int *num_ortho, struct DotList 
 	initialize_alist(list, 0, num2);
 	initialize_alist(add_list, 0, num2);
 	initialize_alist(cut_list, 0, num2);
-	initialize_algns(added_algns, 0, num1);
+	initialize_algns(added_algns, 0, num1+num2);
 
 	initialize_slist(st1, 0, num1);
 	initialize_slist(st2, 0, num2);
@@ -465,7 +519,12 @@ void make_symmetry(struct DotList **ortho_algns, int *num_ortho, struct DotList 
 				}
 
 				if( num_add > 0 ) {
-					num_added = add_algns(add_list, num_add, symm_algns, num3, g, added_algns, num_added, (*ortho_algns)[i].sign);
+					if( num_add > (*num_ortho) ) {
+						fatalf("adding alignments more than allocated: %d, %d\n", *num_ortho, num_add);
+					}
+					else {
+						num_added = add_algns(add_list, num_add, symm_algns, num3, g, added_algns, num_added, (*ortho_algns)[i].sign);
+					}
 				}
 			}
 		}
@@ -939,8 +998,15 @@ int add_algns(struct short_alist *add_list, int num_add, struct DotList *algns, 
 	tmp = assign_I(0,1);
 	query_x = assign_I(0,1);
 	query_y = assign_I(0,1);
-	candi_algns = (struct DotList *) ckalloc(num_algns * sizeof(struct DotList));	
-	initialize_algns(candi_algns, 0, num_algns);
+
+	if( num_algns == 0 ) {
+		candi_algns = (struct DotList *) ckalloc(sizeof(struct DotList));	
+		initialize_algns(candi_algns, 0, 1);
+	}
+	else {
+		candi_algns = (struct DotList *) ckalloc(num_algns * sizeof(struct DotList));	
+		initialize_algns(candi_algns, 0, num_algns);
+	}
 
 	for ( i = 0; i < num_add; i++ ) {
 		num_candi = search_candi_algns(algns, num_algns, add_list[i].y, add_list[i].x, candi_algns);

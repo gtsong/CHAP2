@@ -409,11 +409,12 @@ bool is_already_in(struct ops_list tmp_ops, struct ops_list *ops, int num_ops)
 //bool do_all_species_agree(struct ops_list tmp_ops, struct ops_list **ops, int *num_ops, int *temp_list, int num_list, struct DotList **ortho_algns, int *num_algns, struct slist **sorted, bool *is_dir_same)
 bool do_all_species_agree(struct ops_list tmp_ops, struct ops_list **ops, int *num_ops, int *temp_list, int num_list, bool *is_dir_same)
 {
-	bool res = true, is_in = false;
+	bool res = false, is_in = false;
 	struct I src, dst;
 	struct I ops_src, ops_dst;
 	int i = 0, j = 0, cur_sp = 0;
 	int count_same = 0, count_opp = 0;
+	int count = 0;
 
 	ops_src = assign_I(0, 1);
 	ops_dst = assign_I(0, 1);
@@ -421,7 +422,8 @@ bool do_all_species_agree(struct ops_list tmp_ops, struct ops_list **ops, int *n
 	dst = assign_I(tmp_ops.dstStart,tmp_ops.dstEnd);
 	
 	i = 1;
-	while( ( i < num_list) && ( res == true ) ) {
+//	while( ( i < num_list) && ( res == true ) ) {
+	while( i < num_list ) {
 		cur_sp = temp_list[i];
 		is_in = false;
 		j = 0;
@@ -447,14 +449,18 @@ bool do_all_species_agree(struct ops_list tmp_ops, struct ops_list **ops, int *n
 			if( is_one_to_one == true ) {
 				res = false;
 			}
-*/
 			res = false;
+*/
 		}
 		else {
-
+			count++;
 		}
 		i++;
 	} 
+
+	if( count >= (int)(0.7*((float)num_list)+0.5) ) {
+		res = true;
+	}
 
 	if( res == true ) {
 		if( count_same > count_opp ) {

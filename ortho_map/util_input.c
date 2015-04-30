@@ -373,7 +373,7 @@ int count_local_algns(char *fname, char *species, char *species2)
 {
 	int count = 0;
 	FILE *f;
-	int b1, e1, b2, e2, temp;
+	int b1 = 0, e1 = 0, b2 = 0, e2 = 0, temp = 0;
 	char len1[LEN_NAME], len2[LEN_NAME], strand[LEN_NAME];
 	char name1[LEN_NAME], name2[LEN_NAME];
 
@@ -382,8 +382,7 @@ int count_local_algns(char *fname, char *species, char *species2)
 	else {
     while(fgets(S, BIG, f)) {
       if( S[0] == '#' ) {
-        while( S[0] == '#' ) {
-          fgets(S, BIG, f);
+        while( (S[0] == '#') && fgets(S, BIG, f) ) {
           if( strncmp(S, "##maf", 5) == 0 ) {
             count = 0;
           }
@@ -392,6 +391,11 @@ int count_local_algns(char *fname, char *species, char *species2)
       }
 
       if( S[0] == 'a' ) {
+				strcpy(strand, "+");
+				strcpy(len1, "0");
+				strcpy(len2, "0");
+				strcpy(name1, "");
+				strcpy(name2, "");
         if ((fgets(S, BIG, f) == NULL) || (fgets(T, BIG, f) == NULL))
           fatalf("cannot find alignment in %s", fname);
         if( (sscanf(S, "%*s %s %d %d %*s %s", name1, &b1, &e1, len1) != 4) || (sscanf(T, "%*s %s %d %d %s %s", name2, &b2, &e2, strand, len2) != 5)) {
