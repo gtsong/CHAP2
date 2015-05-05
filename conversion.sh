@@ -56,7 +56,7 @@ $BIN/check_species_tree $1 $TEMP/all_species.txt
 # ---- make working copies of sequence files, and run RepeatMasker ----
 # sequence names in each alignment block are formed as $(species name).$(contig name) for multiple contigs
 
-if [ $# -eq 1 ] || [[ $# -eq 2 && $2 = "--distant" ]]
+if [ \( "$#" -eq 1 \) -o \( \( "$#" -eq 2 -a "$2" = "--distant" \) \) ]
 then
 	rm -rf $MASK_SEQ; mkdir -p $MASK_SEQ
 	rm -rf $RM_OUT;   mkdir -p $RM_OUT
@@ -78,7 +78,7 @@ then
 	do
 		rm -rf $TEMP; mkdir -p $TEMP
 		mv $MASK_SEQ/$sp $TEMP/$sp
-		$REPEATMASKER -species "saccharomyces cerevisiae" -xsmall $TEMP/$sp
+		$REPEATMASKER -xsmall $TEMP/$sp
 		#cp $TEMP/$sp.masked $MASK_SEQ/$sp
 
 		echo ">"$sp > "$TEMP/$sp"_1
@@ -98,7 +98,7 @@ then
 
 		cp $TEMP/$sp.out $RM_OUT/$sp.out
 	done
-elif [ $2 = "--no_rm" ] || [[ $# -eq 3 && $3 = "--no_rm" ]]
+elif [ \( $2 = "--no_rm" \) -o \( \( "$#" -eq 3 -a "$3" = "--no_rm" \) \) ]
 then
 	for sp in `ls $USER_SEQ`
 	do
@@ -148,7 +148,7 @@ do
 			if [ $# -eq 1 ] 
 			then
 				y_drop=3400
-			elif [ $2 = "--distant" ] || [[ $# -eq 3 && $3 = "--distant" ]]
+			elif [ \( "$2" = "--distant" \) -o \( \( "$#" -eq 3 -a "$3" = "--distant" \) \) ]
 			then
 				y_drop=5300
 			else
