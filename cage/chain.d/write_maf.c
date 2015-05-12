@@ -9,7 +9,7 @@
 extern char S[BIG], T[BIG];
 extern int debug_mode;
 
-void write_maf(char *fname, struct DotList *algns, int num_algns, struct r_list *rp1, struct r_list *rp2, int len1, int len2, FILE *g)
+void write_maf(char *fname, struct DotList *algns, int num_algns, struct r_list *rp1, struct r_list *rp2, int len1, int len2, FILE *g, char *species, char *species2)
 {
 	int i;
 	int *cid;
@@ -45,7 +45,7 @@ void write_maf(char *fname, struct DotList *algns, int num_algns, struct r_list 
 //	binfo->len2 = len2;
 
 	f = fopen(fname, "w");
-	fprintf(f, "##maf version=1 scoring=lastz-pid\n");
+	fprintf(f, "##maf version=1 scoring=lastz-pid %s %s\n", species, species2);
 	for( i = 0; i < num_algns; i++ ) {
 		if( is_written[i] == false ) {
 			binfo->len1 = algns[i].len1;

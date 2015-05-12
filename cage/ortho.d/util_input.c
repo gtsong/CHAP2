@@ -197,7 +197,7 @@ void read_exons(struct exons_list *init_exons, struct exons_list *exons, int *nu
       j++;
     }
     else if( (temp_code == sp1_code) || (temp_code == sp2_code) ){
-			if( sscanf(buf+1, "%s %s", item1, item2) != 2 ) {
+			if( sscanf(buf, "%s %s", item1, item2) != 2 ) {
 				fatalf("%s: unsupported format in the %s codex file\n", buf, temp_name);
 			}
 			else {

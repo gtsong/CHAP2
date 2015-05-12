@@ -14,8 +14,8 @@ void mark_chain(struct DotList *dots, int id1, int id2, struct DotList *init_dot
 void update_init_algn(struct I reg, struct DotList *dots, int id, bool is_x, int cmp_id, struct DotList *init_dots, FILE *fp, int mode);
 void adjust_init_algn(struct DotList *init_dots, int id, struct I dup_reg, bool is_x, FILE *fp, int mode, bool dup_is_x);
 void rollback_init_dots(struct DotList *dots, int id, bool is_x, int num_algns, struct DotList *init_algns, int num_init_algns, FILE *fp, int num_ops, struct ops_list *ops, int mode, int size);
-void write_init_maf(FILE *output_f, struct DotList *init_algns, int num_algns, struct n_pair *contigs1, struct n_pair *contigs2, int len1, int len2, FILE *fp, int flag);
-void write_init_maf_stdout(struct DotList *init_algns, int num_algns, struct n_pair *contigs1, struct n_pair *contigs2, int len1, int len2, FILE *fp, int flag);
+void write_init_maf(FILE *output_f, struct DotList *init_algns, int num_algns, struct n_pair *contigs1, struct n_pair *contigs2, int len1, int len2, FILE *fp, int flag, char *speices, char *species2);
+void write_init_maf_stdout(struct DotList *init_algns, int num_algns, struct n_pair *contigs1, struct n_pair *contigs2, int len1, int len2, FILE *fp, int flag, char *species, char *species2);
 bool check_in_cid_list(int index, int *list, int num_list);
 void update_init_algn_del(struct DotList *dots, int cmp_id, struct I del_reg, bool is_x, FILE *fp, struct DotList *init_dots);
 void update_pid_init_algns(int num_init_algns, struct DotList *init_algns, FILE *f, float avg_pid);

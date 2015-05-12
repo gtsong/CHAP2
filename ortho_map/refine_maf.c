@@ -33,6 +33,7 @@ int main(int argc, char **argv)
 	int *size1, *size2;
 	int count = 0;
 	char species[100], species2[100];
+	char temp_name[100], temp_name2[100];
 	char ctg_name[100], name[100];
 	int i = 0, j = 0;
 	FILE *f, *g;
@@ -74,15 +75,20 @@ int main(int argc, char **argv)
 	*num_position = 0;
 	*num_content = 0;
 	*num_algns = 0;
-	count = count_local_algns(argv[1], species, species2);
-	strcpy(name, species);
-	concat_ctg_name(name, species, ctg_name);
-	strcpy(name, species2);
-	concat_ctg_name(name, species2, ctg_name);
+
+	count = count_local_algns(argv[2], species, species2);
+	if( count > 0 ) {
+		strcpy(name, species);
+		concat_ctg_name(name, species, ctg_name);
+		strcpy(name, species2);
+		concat_ctg_name(name, species2, ctg_name);
+	}
 
 	f = ckopen(argv[7], "r");
-  num_contigs1 = count_contigs(species, f);
-  num_contigs2 = count_contigs(species2, f);
+	if( count > 0 ) {
+	  num_contigs1 = count_contigs(species, f);
+ 		num_contigs2 = count_contigs(species2, f);
+	}
 
 	if( num_contigs1 > 0 ) {
 		contigs1 = (struct n_pair *) ckalloc(num_contigs1 * sizeof(struct n_pair));
@@ -98,6 +104,8 @@ int main(int argc, char **argv)
 		cal_length_sum_from_ctglist(len_sum2, contigs2, num_contigs2);
 	}
 	fclose(f);
+
+	count = count_local_algns(argv[1], temp_name, temp_name2);
 
 	if( count > 0 ) {
 		position_ortho = (struct DotList *) ckalloc(count * sizeof(struct DotList));
@@ -118,8 +126,20 @@ int main(int argc, char **argv)
 
 	count = count_local_algns(argv[2], species, species2);
 	if( count > 0 ) {
+		strcpy(name, species);
+		concat_ctg_name(name, species, ctg_name);
+		strcpy(name, species2);
+		concat_ctg_name(name, species2, ctg_name);
+	}
+
+	if( count > 0 ) {
 		algns = (struct DotList *) ckalloc(count * sizeof(struct DotList));
-		position_ortho = (struct DotList *) ckrealloc(position_ortho, (count+(*num_position)) * sizeof(struct DotList));
+		if( (*num_position) == 0 ) {
+			position_ortho = (struct DotList *) ckalloc(count * sizeof(struct DotList));
+		}
+		else {
+			position_ortho = (struct DotList *) ckrealloc(position_ortho, (count+(*num_position)) * sizeof(struct DotList));
+		}
 		content_ortho = (struct DotList *) ckalloc((count+(*num_position)) * sizeof(struct DotList));
 		*num_alloc_blocks1 = count + *num_position;
 		*num_alloc_blocks2 = count + *num_position;
@@ -138,7 +158,7 @@ int main(int argc, char **argv)
 		fatalf("counting error 3: %d vs. %d\n", count, *num_algns);
 	}
 
-	if( (f = ckopen(argv[3], "r")) != NULL ) {
+	if( ((*num_algns) > 0) && ((f = ckopen(argv[3], "r")) != NULL) ) {
 		num_ops1 = count_final_ops(species2, f, SELF1);
 		if( num_ops1 > 0 ) {
 			ops1 = (struct ops_list *) ckalloc(num_ops1 * sizeof(struct ops_list));
@@ -151,7 +171,7 @@ int main(int argc, char **argv)
 		fatalf("file open error: %s\n", argv[3]);
 	}
 
-	if( (f = ckopen(argv[4], "r")) != NULL ) {
+	if( ((*num_algns) > 0 ) && ((f = ckopen(argv[4], "r")) != NULL) ) {
 		num_ops2 = count_ops(species2, f, SELF2);
 		if( num_ops2 > 0 ) {
 			ops2 = (struct ops_list *) ckalloc(num_ops2 * sizeof(struct ops_list));
@@ -237,14 +257,14 @@ int main(int argc, char **argv)
 	extend_algn_ends(position_ortho, *num_position, f);
 	replace_contigs_len(contigs1, num_contigs1);
 	replace_contigs_len(contigs2, num_contigs2);
-	write_init_maf(g, position_ortho, *num_position, contigs1, contigs2, num_contigs1, num_contigs2, f, PAIR);
+	write_init_maf(g, position_ortho, *num_position, contigs1, contigs2, num_contigs1, num_contigs2, f, PAIR, species, species2);
 	fclose(g);
 
   *num_content = redo_dups_for_mtom_inc_conv(num_ops1, ops1, *num_content, &content_ortho, f, REF_SEQ, num_alloc_blocks2);
   *num_content = redo_dups_for_mtom_inc_conv(num_ops2, ops2, *num_content, &content_ortho, f, SELF2, num_alloc_blocks2);
 	g = ckopen(argv[6], "w");
 	extend_algn_ends(content_ortho, *num_content, f);
-	write_init_maf(g, content_ortho, *num_content, contigs1, contigs2, num_contigs1, num_contigs2, f, PAIR);
+	write_init_maf(g, content_ortho, *num_content, contigs1, contigs2, num_contigs1, num_contigs2, f, PAIR, species, species2);
 	fclose(g);
 
 	fclose(f);

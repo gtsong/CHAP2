@@ -301,7 +301,7 @@ void read_exons(struct exons_list *init_exons, struct exons_list *exons, int *nu
       j++;
     }
     else if( (temp_code == sp1_code) || (temp_code == sp2_code) ){
-			if( sscanf(buf+1, "%s %s", item1, item2) != 2 ) {
+			if( sscanf(buf, "%s %s", item1, item2) != 2 ) {
 				fatalf("%s: unsupported format in the %s codex file\n", buf, temp_name);
 			}
 			else {
@@ -376,8 +376,10 @@ int count_local_algns(char *fname, char *species, char *species2)
 	int b1 = 0, e1 = 0, b2 = 0, e2 = 0, temp = 0;
 	char len1[LEN_NAME], len2[LEN_NAME], strand[LEN_NAME];
 	char name1[LEN_NAME], name2[LEN_NAME];
+	bool is_read = false;
 
 	if((f = fopen(fname, "r")) == NULL) {
+		fatalf("%s not exist\n", fname);
 	}
 	else {
     while(fgets(S, BIG, f)) {
@@ -423,8 +425,23 @@ int count_local_algns(char *fname, char *species, char *species2)
     }
 	}
 
-	concat_ctg_name(name1, species, len1);	
-	concat_ctg_name(name2, species2, len1);	
+	if( count > 0 ) {
+		concat_ctg_name(name1, species, len1);	
+		concat_ctg_name(name2, species2, len1);	
+	}
+	else {
+		fseek(f, 0, SEEK_SET);
+    while((is_read == false) && fgets(S, BIG, f)) {
+      if( S[0] == '#' ) {
+         if( strncmp(S, "##maf", 5) == 0 ) {
+					is_read = true;
+        	if( sscanf(S, "%*s %*s %*s %s %s", species, species2) != 2) {
+			   		fatalf("species info expected in %s (util_input.c)\n", S);
+					}
+				}
+			}
+		}
+	}
 
   fclose(f);
 	return(count);

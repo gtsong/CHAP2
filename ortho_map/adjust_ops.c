@@ -292,7 +292,8 @@ int main(int argc, char **argv)
 				strcpy(name1, argv[2]);
 			}
 			else {
-				sprintf(name1, "%s.%s", contigs[ref_id][ctg_id1].name1, contigs[ref_id][ctg_id1].name2);
+//				sprintf(name1, "%s.%s", contigs[ref_id][ctg_id1].name1, contigs[ref_id][ctg_id1].name2);
+				strcpy(name1, contigs[ref_id][ctg_id1].name1);
 				len1 = contigs[ref_id][ctg_id1].len;
 			}
 
@@ -303,7 +304,8 @@ int main(int argc, char **argv)
 				strcpy(name2, argv[2]);
 			}
 			else {
-				sprintf(name2, "%s.%s", contigs[ref_id][ctg_id2].name1, contigs[ref_id][ctg_id2].name2);
+//				sprintf(name2, "%s.%s", contigs[ref_id][ctg_id2].name1, contigs[ref_id][ctg_id2].name2);
+				strcpy(name2, contigs[ref_id][ctg_id2].name1);
 				len2 = contigs[ref_id][ctg_id2].len;
 			}
 			printf("%c %s %d %d %s %d %d 0 %d %d\n", cur_ops[i].sign, name1, cur_ops[i].srcStart-len1, cur_ops[i].srcEnd-len1, name2, cur_ops[i].dstStart-len2, cur_ops[i].dstEnd-len2, cur_ops[i].dir, (int)cur_ops[i].pid);

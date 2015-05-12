@@ -61,7 +61,7 @@ void read_maf(char *fname, int mode, struct DotList *algns, int *num_algns, int 
 	if (((status = fgets(S, BIG, fp)) == NULL) || strncmp(S, "##maf version", 13))
 		fatalf("%s is not a maf file", fname);
 	while ((status != NULL) && (S[0] == '#')) {
-		if( (mode == C_MODE) && (strncmp(S, "##maf", 5) == 0) ) {
+		if( (mode == C_MODE) && (status != NULL) && (strncmp(S, "##maf", 5) == 0) ) {
 			algn_type++;
 			j = 0;
 		}
@@ -71,12 +71,15 @@ void read_maf(char *fname, int mode, struct DotList *algns, int *num_algns, int 
 	while ((status != NULL) && (strstr(S, "eof") == NULL)) {
 		if(S[0] == '#') {
 			if(mode == C_MODE) {
-				while(S[0] == '#') {
-					if ((status = fgets(S, BIG, fp)) == NULL)
-						fatalf("no alignments in %s", fname);
-					if( strncmp(S, "##maf", 5) == 0 ) algn_type++;
+				while((status != NULL) && (S[0] == '#')) {
+//					if ((status = fgets(S, BIG, fp)) == NULL)
+//						fatalf("no alignments in %s", fname);
+					if( strncmp(S, "##maf", 5) == 0 ) {
+						algn_type++;
+					}
+					status = fgets(S, BIG, fp);
 				}	
-				algn_type++;
+				
 				if( algn_type > PAIR ) fatal("too many alignments are combined\n");
 			}
 			else {
@@ -85,92 +88,96 @@ void read_maf(char *fname, int mode, struct DotList *algns, int *num_algns, int 
 			j = 0;
 		}
 
-		if (S[0] != 'a')
-			fatalf("expecting an a-line in %s, saw %s",
-			  fname, S);
-		if ((fgets(S, BIG, fp) == NULL) || (fgets(T, BIG, fp) == NULL))
-			fatalf("cannot find alignment in %s", fname);
-		if ((sscanf(S, "%*s %s %d %d %*s %s", name1, &b1, &e1, len1) != 4) || (sscanf(T, "%*s %s %d %d %s %s", name2, &b2, &e2, strand, len2) != 5))
-		{
-			fatalf("bad alignment info of 2 in %s", fname);
-		}
-		// aligned interval given as base-0 start and length
-		e1 += b1;
-		e2 += b2;
+		if ( (status == NULL) && (S[0] == '#') ) {}
+		else {
+			if (S[0] != 'a')
+				fatalf("expecting an a-line in %s, saw %s",
+				  fname, S);
 
-		if( strcmp(strand, "-") == 0) {
-			temp = b2;
-			b2 = atoi(len2) - e2;
-			e2 = atoi(len2) - temp;	
-		}			
-
-		b1++;
-		b2++;
-		e1++;
-		e2++;
-
-		s = nucs(S);
-		t = nucs(T);
-		a_pid = cal_pid(s, t, strlen(s)-1);
-
-		if( ((mode == D_MODE) || ((mode == C_MODE) && (algn_type <= PAIR))) && (( (algn_type != PAIR) && (b1 >= b2)) || ((algn_type != PAIR) && (abs(b1-b2) <= DEL_TH) && (abs(e1-e2) <=DEL_TH)) || ((e1-b1) < ALT_EFFEC_VALUE) || (a_pid <= PID_TH) )) {}
-		else  {
-			algns[count].x = assign_I(b1, e1);
-			if( b2 < e2 ) algns[count].y = assign_I(b2, e2);
-			else algns[count].y = assign_I(e2, b2);
-			algns[count].identity = a_pid;
-
-			if( strcmp(strand, "+") == 0 ) {
-				algns[count].sign = 0;
-				algns[count].init_sign = 0;
-			}	
-			else if( strcmp(strand, "-") == 0 ) {
-				algns[count].sign = 1;
-				algns[count].init_sign = 1;
+			if ((fgets(S, BIG, fp) == NULL) || (fgets(T, BIG, fp) == NULL))
+				fatalf("cannot find alignment in %s", fname);
+			if ((sscanf(S, "%*s %s %d %d %*s %s", name1, &b1, &e1, len1) != 4) || (sscanf(T, "%*s %s %d %d %s %s", name2, &b2, &e2, strand, len2) != 5))
+			{
+				fatalf("bad alignment info of 2 in %s", fname);
 			}
-			else {
-				algns[count].sign = DELETED;
-				algns[count].init_sign = DELETED;
+			// aligned interval given as base-0 start and length
+			e1 += b1;
+			e2 += b2;
+
+			if( strcmp(strand, "-") == 0) {
+				temp = b2;
+				b2 = atoi(len2) - e2;
+				e2 = atoi(len2) - temp;	
+			}			
+
+			b1++;
+			b2++;
+			e1++;
+			e2++;
+
+			s = nucs(S);
+			t = nucs(T);
+			a_pid = cal_pid(s, t, strlen(s)-1);
+
+			if( ((mode == D_MODE) || ((mode == C_MODE) && (algn_type <= PAIR))) && (( (algn_type != PAIR) && (b1 >= b2)) || ((algn_type != PAIR) && (abs(b1-b2) <= DEL_TH) && (abs(e1-e2) <=DEL_TH)) || ((e1-b1) < ALT_EFFEC_VALUE) || (a_pid <= PID_TH) )) {}
+			else  {
+				algns[count].x = assign_I(b1, e1);
+				if( b2 < e2 ) algns[count].y = assign_I(b2, e2);
+				else algns[count].y = assign_I(e2, b2);
+				algns[count].identity = a_pid;
+
+				if( strcmp(strand, "+") == 0 ) {
+					algns[count].sign = 0;
+					algns[count].init_sign = 0;
+				}	
+				else if( strcmp(strand, "-") == 0 ) {
+					algns[count].sign = 1;
+					algns[count].init_sign = 1;
+				}
+				else {
+					algns[count].sign = DELETED;
+					algns[count].init_sign = DELETED;
+				}
+	
+				algns[count].fid = i; // ith alignment
+				algns[count].indiv_fid = j; // j alignment
+				algns[count].index = count; // ith alignment
+ 		    algns[count].c_id = -1; // not chained alignment
+ 		    algns[count].m_id = -1; // not chained alignment
+ 	    	algns[count].rp1_id = -1; // the inserted repeat id of the chained alignment in first seq
+     		algns[count].rp2_id = -1; // the inserted repeat id of the chained alignment in second seq 
+      	algns[count].l_id = -1;
+   	  	algns[count].lock = -1;  
+      	algns[count].m_x = assign_I(0,1);
+      	algns[count].m_y = assign_I(0,1);
+      	algns[count].xl_diff = 0; // the offset of the left end
+      	algns[count].yl_diff = 0; // the offset of the left end
+      	algns[count].xr_diff = 0; // the offset of the right end
+      	algns[count].yr_diff = 0; // the offset of the right end
+      	algns[count].pair_self = -1;
+      	algns[count].l_pid = -1;
+				algns[count].sp_id = algn_type; // SELF1 for first self-alignment, SELF2 for second self-alignment and PAIR for pairwise alignment
+      	algns[count].xl_offset = 0; // the offset of low of x
+      	algns[count].yl_offset = 0; // the offset of up of x
+      	algns[count].xr_offset = 0; // the offset of low of y 
+				if( algn_type == PAIR ) algns[count].pair_self = PAIR;
+				else algns[count].pair_self = SELF;
+				strcpy(algns[count].name1, name1);
+				strcpy(algns[count].name2, name2);
+				algns[count].len1 = atoi(len1);
+				algns[count].len2 = atoi(len2);
+				algns[count].ctg_id1 = -1;
+				algns[count].ctg_id2 = -1;
+
+				count++;
 			}
 
-			algns[count].fid = i; // ith alignment
-			algns[count].indiv_fid = j; // j alignment
-			algns[count].index = count; // ith alignment
-      algns[count].c_id = -1; // not chained alignment
-      algns[count].m_id = -1; // not chained alignment
-      algns[count].rp1_id = -1; // the inserted repeat id of the chained alignment in first seq
-      algns[count].rp2_id = -1; // the inserted repeat id of the chained alignment in second seq 
-      algns[count].l_id = -1;
-      algns[count].lock = -1;  
-      algns[count].m_x = assign_I(0,1);
-      algns[count].m_y = assign_I(0,1);
-      algns[count].xl_diff = 0; // the offset of the left end
-      algns[count].yl_diff = 0; // the offset of the left end
-      algns[count].xr_diff = 0; // the offset of the right end
-      algns[count].yr_diff = 0; // the offset of the right end
-      algns[count].pair_self = -1;
-      algns[count].l_pid = -1;
-			algns[count].sp_id = algn_type; // SELF1 for first self-alignment, SELF2 for second self-alignment and PAIR for pairwise alignment
-      algns[count].xl_offset = 0; // the offset of low of x
-      algns[count].yl_offset = 0; // the offset of up of x
-      algns[count].xr_offset = 0; // the offset of low of y 
-			if( algn_type == PAIR ) algns[count].pair_self = PAIR;
-			else algns[count].pair_self = SELF;
-			strcpy(algns[count].name1, name1);
-			strcpy(algns[count].name2, name2);
-			algns[count].len1 = atoi(len1);
-			algns[count].len2 = atoi(len2);
-			algns[count].ctg_id1 = -1;
-			algns[count].ctg_id2 = -1;
-
-			count++;
+			if ((fgets(S, BIG, fp) == NULL) || (S[0] != '\n'))
+				fatalf("bad alignment end in %s", fname);
+			status = fgets(S, BIG, fp);
+			i++; // ith alignment 
+			j++;
 		}
-
-		if ((fgets(S, BIG, fp) == NULL) || (S[0] != '\n'))
-			fatalf("bad alignment end in %s", fname);
-		status = fgets(S, BIG, fp);
-		i++; // ith alignment 
-		j++;
 	}
 
 	*size1 = atoi(len1);

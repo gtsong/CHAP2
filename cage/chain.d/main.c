@@ -44,11 +44,13 @@ int main(int argc, char **argv)
 	int num_genes1 = 0, num_genes2 = 0;
 	
 	debug_mode = FALSE;
-	if((argc == 6) && (strcmp(argv[5], "debug-mode") == 0)) {
+	if((argc == 8) && (strcmp(argv[5], "debug-mode") == 0)) {
+		strcpy(species, argv[5]);
+		strcpy(species2, argv[6]);
 		debug_mode = TRUE;
 	}
-	else if((argc == 7) || (argc == 8)) {
-		if((argc == 8) && (strcmp(argv[7], "debug-mode") == 0)) debug_mode = TRUE;
+	else if((argc == 9) || (argc == 10)) {
+		if((argc == 10) && (strcmp(argv[9], "debug-mode") == 0)) debug_mode = TRUE;
 	  f = fopen(argv[5], "r");
  		while(fgets(buf, 1000, f))
 	  {
@@ -70,10 +72,16 @@ int main(int argc, char **argv)
 		fseek(f, 0, SEEK_SET);
 		num_genes2 = read_genes(f, genes2, argv[6]);
 		fclose(f);
+		strcpy(species, argv[7]);
+		strcpy(species2, argv[8]);
 	}
-	else if(argc !=5 )
+	else if(argc !=7 )
 	{
 		fatal("args: pair_maf output rm-out_file1 rm-out_file2\n");
+	}
+	else {
+		strcpy(species, argv[5]);
+		strcpy(species2, argv[6]);
 	}
 
 	num_algns = (int *) ckalloc(sizeof(int));
@@ -226,11 +234,11 @@ int main(int argc, char **argv)
 		}
 
 		if( (*num_init) > 0 ) {
-			write_maf(argv[2], init_algns, *num_init, rp1, rp2, *size1, *size2, f); 
+			write_maf(argv[2], init_algns, *num_init, rp1, rp2, *size1, *size2, f, species, species2); 
 		}
 		else {
 			f = fopen(argv[2], "w");
-			fprintf(f, "##maf version=1 scoring=lastz-pid\n");
+			fprintf(f, "##maf version=1 scoring=lastz-pid %s %s\n", species, species2);
 			fclose(f);
 		}
 
@@ -254,7 +262,7 @@ int main(int argc, char **argv)
 	}
 	else {
 		f = fopen(argv[2], "w");
-		fprintf(f, "##maf version=1 scoring=lastz-pid\n");
+		fprintf(f, "##maf version=1 scoring=lastz-pid %s %s\n", species, species2);
 		fclose(f);
 	}
 

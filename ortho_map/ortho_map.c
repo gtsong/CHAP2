@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 	int *rm_sp;
 	int *left_sp;
 	FILE *f, *g;
-	int maf_mode = G_MODE;
+	int maf_mode = C_MODE;
 	int mode = AFTER_SP;
 	char species[LEN_NAME], species2[LEN_NAME];
 	char out_species[LEN_NAME];
@@ -123,6 +123,7 @@ int main(int argc, char **argv)
 	int *len_sum1, *len_sum2;
 	int len1 = 0, len2 = 0;
 	bool is_contig_printed = false;
+	char *status;
 //	struct bipar_node *graph;
 
 	src = assign_I(0,1);
@@ -142,9 +143,9 @@ int main(int argc, char **argv)
 	strcpy(tree_line, "");
 	strcpy(buf, "");
 
-	if( argc >= 3 ) {
-		if( strcmp(argv[2], "debug-mode") == 0 ) {
-			if( argc == 3 ) {
+	if( argc >= 5 ) {
+		if( strcmp(argv[4], "debug-mode") == 0 ) {
+			if( argc == 5 ) {
 				debug_mode = TRUE;
 				run_mode = MANY_TO_MANY;
 			}
@@ -163,12 +164,12 @@ int main(int argc, char **argv)
 			fatal("args: dots-file and mode (inf-dup, many-to-many, one-to-many, one-to-one, position-ortho, or content-ortho) )\n");
 		}
 
-		if( argc == 3 ) {}
-		else if( argc == 4 ) {
-			if( strcmp(argv[3], "debug-mode") == 0 ) {
+		if( argc == 5 ) {}
+		else if( argc == 6 ) {
+			if( strcmp(argv[5], "debug-mode") == 0 ) {
 				debug_mode = TRUE;
 			}
-			else if( (f = ckopen(argv[3], "r")) != NULL ) { // conversion results
+			else if( (f = ckopen(argv[5], "r")) != NULL ) { // conversion results
 				fclose(f);
 				is_gc_given = TRUE;
 //				is_event_output_required = true;	
@@ -177,12 +178,12 @@ int main(int argc, char **argv)
 				fatal("args: dots-file, mode (many-to-many, one-to-many, one-to-one, position-ortho, or content-ortho) ), conv-file, and debug-mode\n");
 			}
 		}
-		else if( argc == 5 ) {
-			if( strcmp(argv[4], "debug-mode") == 0 ) {
+		else if( argc == 7 ) {
+			if( strcmp(argv[6], "debug-mode") == 0 ) {
 				is_gc_given = TRUE;
 				debug_mode = TRUE;
 			}
-			else if( ((f = ckopen(argv[3], "r")) != NULL) && ((g = ckopen(argv[4], "r")) != NULL) ) { // conversion results and gene annotations
+			else if( ((f = ckopen(argv[5], "r")) != NULL) && ((g = ckopen(argv[6], "r")) != NULL) ) { // conversion results and gene annotations
 				is_gc_given = TRUE;
 				is_exons_given = TRUE;
 //				is_event_output_required = true;	
@@ -193,12 +194,12 @@ int main(int argc, char **argv)
 				fatal("args: dots-file, mode (many-to-many, one-to-many, or one-to-one) ), conv-file, exons, (and debug-mode)\n");
 			}
 		}
-		else if( argc == 6 ) {
+		else if( argc == 8 ) {
 			is_gc_given = TRUE;
 			is_exons_given = TRUE;
-			if( ((f = ckopen(argv[3], "r")) != NULL) && ((g = ckopen(argv[4], "r")) != NULL) ) 
+			if( ((f = ckopen(argv[5], "r")) != NULL) && ((g = ckopen(argv[6], "r")) != NULL) ) 
 			{ 
-				if (strcmp(argv[5], "debug-mode") == 0)  {
+				if (strcmp(argv[7], "debug-mode") == 0)  {
 					debug_mode = TRUE;
 				}
 				else {
@@ -209,11 +210,11 @@ int main(int argc, char **argv)
 				fatal("args: dots-file, mode (many-to-many, one-to-many, or one-to-one) ), conv-file, exons, (and debug-mode)\n");
 			}
 		}
-		else if( argc == 7 ) {
+		else if( argc == 9 ) {
 			is_gc_given = TRUE;
 			is_exons_given = TRUE;
-			if( ((f = ckopen(argv[3], "r")) != NULL) && ((g = ckopen(argv[4], "r")) != NULL) ) {
-				if ( strcmp(argv[6], "debug-mode") == 0 ) {
+			if( ((f = ckopen(argv[5], "r")) != NULL) && ((g = ckopen(argv[6], "r")) != NULL) ) {
+				if ( strcmp(argv[8], "debug-mode") == 0 ) {
 					debug_mode = TRUE;
 				}
 				else {
@@ -228,13 +229,13 @@ int main(int argc, char **argv)
 				fatal("args: dots-file, mode (many-to-many, one-to-many, or one-to-one) ), conv-file, exons, events-file (or debug-mode)\n");
 			}
 		}
-		else if( argc == 8 ) {
-			if( ((f = ckopen(argv[3], "r")) != NULL) && ((g = ckopen(argv[4], "r")) != NULL) ) {
+		else if( argc == 10 ) {
+			if( ((f = ckopen(argv[5], "r")) != NULL) && ((g = ckopen(argv[6], "r")) != NULL) ) {
 				is_gc_given = TRUE;
 				is_exons_given = TRUE;
 				is_contig_printed = true;
 //				debug_mode = TRUE;
-				if( strcmp(argv[5], "no-events") == 0 ) {
+				if( strcmp(argv[7], "no-events") == 0 ) {
 					is_event_output_required = false;	
 				}
 				else {
@@ -247,17 +248,17 @@ int main(int argc, char **argv)
 			fclose(f);
 			fclose(g);
 		}
-		else if( argc == 9 ) {
-			if( ((f = ckopen(argv[3], "r")) != NULL) && ((g = ckopen(argv[4], "r")) != NULL) ) {
+		else if( argc == 11 ) {
+			if( ((f = ckopen(argv[5], "r")) != NULL) && ((g = ckopen(argv[6], "r")) != NULL) ) {
 
-				if( strcmp(argv[8], "debug-mode") == 0 ) {
+				if( strcmp(argv[10], "debug-mode") == 0 ) {
 					debug_mode = TRUE;
 				}
 				else {
 					fatal("args: dots-file, mode (many-to-many, one-to-many, or one-to-one) ), conv-file, exons, events-file, contigs_file contigs_file (and debug-mode)\n");
 				}
 
-				if( strcmp(argv[5], "no-events") == 0 ) {
+				if( strcmp(argv[7], "no-events") == 0 ) {
 					is_event_output_required = false;	
 				}
 				else {
@@ -276,11 +277,13 @@ int main(int argc, char **argv)
 			fatal("args: dots-file, mode, conv-file, exons\n");
 		}
 	}
-	else if((argc < 3) || (argc > 10))
+	else if((argc < 5) || (argc > 11))
 	{
 		fatal("args: dots-file and mode ( and conv-file and exons )\n");
 	}
 
+	strcpy(species, argv[3]);
+	strcpy(species2, argv[4]);
 	is_x = (bool *) ckalloc(sizeof(bool));
   num_init_algns = (int *) ckalloc(sizeof(int));
 	num_suspend_pairs = (int *) ckalloc(sizeof(int));
@@ -301,15 +304,15 @@ int main(int argc, char **argv)
 	num_init_exons = 0;
 	num_init_genes = 0;
 	f = ckopen(argv[1], "r");
-	while(fgets(S, BIG, f)) {
+	while((status = fgets(S, BIG, f)) != NULL) {
 		if( S[0] == '#' ) {
-			while( S[0] == '#' ) {
-				fgets(S, BIG, f);
+			while( (status != NULL) && (S[0] == '#') ) {
 				if( strncmp(S, "##maf", 5) == 0 ) {
-					num_a[algn_type] = count;
+					if( algn_type >= 0 ) num_a[algn_type] = count;
 					algn_type++;
 					count = 0;
 				}
+				status = fgets(S, BIG, f);
 			}
 
 			if( algn_type != -1 ) {
@@ -317,11 +320,10 @@ int main(int argc, char **argv)
 					
 				else num_a[algn_type] = count;
 			}
-			algn_type++;
 			count = 0;	
 		}
 
-  	if( S[0] == 'a' ) {
+  	if( (status != NULL) && (S[0] == 'a') ) {
 			if( (algn_type == -1) || (algn_type > PAIR) ) {
 				fatal("The input is not a ##maf file\n");
 			}
@@ -340,6 +342,8 @@ int main(int argc, char **argv)
 			}
 		}
   }
+
+	num_a[algn_type] = count;
 	fclose(f);
 
 	if( is_spname_determined == true ) {
@@ -347,7 +351,13 @@ int main(int argc, char **argv)
 		concat_ctg_name(temp_name2, species2, temp_name3);
 	}
 	else {
-		fatal("species names not  a ##maf file\n");
+		if( count == 1 ) {
+			concat_ctg_name(temp_name1, species, temp_name3);
+			concat_ctg_name(temp_name2, species2, temp_name3);
+		}
+		else if( count != 0 ) {
+			fatal("species names not in the MAF file\n");
+		}
 	}
 
 	if( algn_type != -1 ) {
@@ -436,6 +446,13 @@ int main(int argc, char **argv)
       init_n_pair(contigs1, 0, (2*(*num_algns))-1);
       init_n_pair(contigs2, 0, (2*(*num_algns))-1);
 		}
+		else {
+			contigs1 = (struct n_pair *) ckalloc(sizeof(struct n_pair));
+			contigs2 = (struct n_pair *) ckalloc(sizeof(struct n_pair));
+      init_n_pair(contigs1, 0, 1);
+      init_n_pair(contigs2, 0, 1);
+		}
+
 		*num_contigs1 = 0;
 		*num_contigs2 = 0;
 		adjust_multi_contig_pos(algns, *num_algns, size1, size2, contigs1, num_contigs1, contigs2, num_contigs2);
@@ -446,13 +463,23 @@ int main(int argc, char **argv)
 		if( (*num_contigs1) > 0 ) len_sum1 = (int *) ckalloc(sizeof(int) * (*num_contigs1));
 		else {
 			len_sum1 = (int *) ckalloc(sizeof(int));
-			fatalf("error: number of contigs - %d - must be at least 1\n", *num_contigs1); 
+			strcpy(contigs1[0].name1, species);
+			strcpy(contigs1[0].name2, species);
+			contigs1[0].len = *size1;
+			contigs1[0].id = 0;
+			*num_contigs1 = 1;
+//			fatalf("error: number of contigs - %d - must be at least 1\n", *num_contigs1); 
 		}		
 
 		if( (*num_contigs2) > 0 ) len_sum2 = (int *) ckalloc(sizeof(int) * (*num_contigs2));
 		else {
 			len_sum2 = (int *) ckalloc(sizeof(int));
-			fatalf("error: number of contigs - %d - must be at least 1\n", *num_contigs1); 
+			strcpy(contigs2[0].name1, species2);
+			strcpy(contigs2[0].name2, species2);
+			contigs2[0].len = *size2;
+			contigs2[0].id = 0;
+			*num_contigs2 = 1;
+//			fatalf("error: number of contigs - %d - must be at least 1\n", *num_contigs1); 
 		}
 
 		cal_length_sum(len_sum1, contigs1, *num_contigs1);
@@ -486,7 +513,7 @@ int main(int argc, char **argv)
 	}
 
 	if( is_gc_given == TRUE ) {
-		f = ckopen(argv[3], "r");
+		f = ckopen(argv[5], "r");
     num_alloc_cv = 0;
     while( fgets(buf, 1000, f) ) if( (buf[0] != '#') && (buf[0] != '(') ) num_alloc_cv++;
 
@@ -633,7 +660,7 @@ int main(int argc, char **argv)
 		if( is_exons_given == TRUE ) {
     	num_init_exons = 0;
 			num_init_genes = 0;
-			f = ckopen(argv[4], "r");
+			f = ckopen(argv[6], "r");
  	 	  while( fgets(buf, 1000, f) ) {
 				if( (buf[0] != '#') && (buf[0] != '<') && (buf[0] != '>') ) num_init_exons++;
 				if( (buf[0] == '<') || (buf[0] == '>') ) num_init_genes++;
@@ -653,7 +680,7 @@ int main(int argc, char **argv)
 			initialize_exons_list(skip_reg1, 0, num_init_exons + (2*num_init_cv));
 			initialize_exons_list(skip_reg2, 0, num_init_exons + (2*num_init_cv));
 
-			read_exons(init_exons, exons, num_exons, genes, num_genes, skip_reg1, &num_skip1, skip_reg2, &num_skip2, argv[4], sp_code, num_sp_code, sp1_code, sp2_code, contigs1, *num_contigs1, len_sum1, contigs2, *num_contigs2, len_sum2);
+			read_exons(init_exons, exons, num_exons, genes, num_genes, skip_reg1, &num_skip1, skip_reg2, &num_skip2, argv[6], sp_code, num_sp_code, sp1_code, sp2_code, contigs1, *num_contigs1, len_sum1, contigs2, *num_contigs2, len_sum2);
 			num_init_genes = *num_genes;
 			num_init_exons = *num_exons;
 		}
@@ -675,7 +702,7 @@ int main(int argc, char **argv)
 		}
 
 		if( is_ancestral == TRUE ) {
-			f = ckopen(argv[5], "r");
+			f = ckopen(argv[7], "r");
 			while( fgets(buf, 1000, f) ) {
 				sscanf(buf, "%s %*s", op_name);
 				if( (strcmp(op_name, "dup") == 0 ) || (strcmp(op_name, "del") == 0) ) num_prev_ops++;
@@ -887,49 +914,51 @@ int main(int argc, char **argv)
 			free(prev_ops);
 		}
 		
-		sorted1 = (struct slist *) ckalloc(sizeof(struct slist) * (*num_algns));
-		initialize_slist(sorted1, 0, (*num_algns));
-		for( i = 0; i < (*num_algns); i++ ) sorted1[i].id = i;
-		sort_by_pid(sorted1, algns, *num_algns);
-		if( debug_mode == TRUE ) {
-			for( i = 0; i < (*num_algns); i++ ) {
-				printf("%d-%d, %d-%d: %d, %d\n", algns[sorted1[i].id].x.lower, algns[sorted1[i].id].x.upper, algns[sorted1[i].id].y.lower, algns[sorted1[i].id].y.upper, algns[sorted1[i].id].sp_id, algns[sorted1[i].id].identity);
-			}
-
-			for( i = 0; i < num_init_cv; i++ ) {
-				printf("%d-%d, %d-%d: %f\n", init_cv[i].a1, init_cv[i].a2, init_cv[i].b1, init_cv[i].b2, init_cv[i].conv_pid);
-			}
-		}
-
-		if( (run_mode == CONTENT_ORTHO) || (run_mode == POSITION_ORTHO) ) {
-			num_cur_cv = num_init_cv;
-			if( num_dup_cv > 0 ) {
-				if( (num_cur_cv+num_dup_cv) > num_alloc_cv ) {
-					cv = ckrealloc(cv, sizeof(struct cv_list) * (num_cur_cv + num_dup_cv));
+		if( *num_algns > 0 ) {
+			sorted1 = (struct slist *) ckalloc(sizeof(struct slist) * (*num_algns));
+			initialize_slist(sorted1, 0, (*num_algns));
+			for( i = 0; i < (*num_algns); i++ ) sorted1[i].id = i;
+			sort_by_pid(sorted1, algns, *num_algns);
+			if( debug_mode == TRUE ) {
+				for( i = 0; i < (*num_algns); i++ ) {
+					printf("%d-%d, %d-%d: %d, %d\n", algns[sorted1[i].id].x.lower, algns[sorted1[i].id].x.upper, algns[sorted1[i].id].y.lower, algns[sorted1[i].id].y.upper, algns[sorted1[i].id].sp_id, algns[sorted1[i].id].identity);
 				}
-
-				for( i = 0; i < num_dup_cv; i++ ) {
-					cv[num_cur_cv+i] = assign_conv(init_dup_cv[i]);
-					if( init_dup_cv[i].sp_id == SELF2 ) {
-						cv[num_cur_cv+i].s1 = cv[num_cur_cv+i].s1 + (*size1);        
-						cv[num_cur_cv+i].s2 = cv[num_cur_cv+i].s2 + (*size1);        
-						cv[num_cur_cv+i].t1 = cv[num_cur_cv+i].t1 + (*size1);        
-						cv[num_cur_cv+i].t2 = cv[num_cur_cv+i].t2 + (*size1);        
-						cv[num_cur_cv+i].a1 = cv[num_cur_cv+i].a1 + (*size1);        
-						cv[num_cur_cv+i].a2 = cv[num_cur_cv+i].a2 + (*size1);        
-						cv[num_cur_cv+i].b1 = cv[num_cur_cv+i].b1 + (*size1);        
-						cv[num_cur_cv+i].b2 = cv[num_cur_cv+i].b2 + (*size1);
+	
+				for( i = 0; i < num_init_cv; i++ ) {
+					printf("%d-%d, %d-%d: %f\n", init_cv[i].a1, init_cv[i].a2, init_cv[i].b1, init_cv[i].b2, init_cv[i].conv_pid);
+				}
+			}
+	
+			if( (run_mode == CONTENT_ORTHO) || (run_mode == POSITION_ORTHO) ) {
+				num_cur_cv = num_init_cv;
+				if( num_dup_cv > 0 ) {
+					if( (num_cur_cv+num_dup_cv) > num_alloc_cv ) {
+						cv = ckrealloc(cv, sizeof(struct cv_list) * (num_cur_cv + num_dup_cv));
 					}
-				}
-				num_cur_cv = num_cur_cv + num_dup_cv;
-			}
-			*num_cv = num_cur_cv;
-		}
 
-		reorder_dups(sorted1, num_algns, algns, size, STRICT, init_algns, *num_init_algns, f, avg_pid, cv, num_cv, ops, num_ops, exons, num_exons, genes, num_genes, old_dups, num_old_dups, run_mode, *size1); 
+					for( i = 0; i < num_dup_cv; i++ ) {
+						cv[num_cur_cv+i] = assign_conv(init_dup_cv[i]);
+						if( init_dup_cv[i].sp_id == SELF2 ) {
+							cv[num_cur_cv+i].s1 = cv[num_cur_cv+i].s1 + (*size1);        
+							cv[num_cur_cv+i].s2 = cv[num_cur_cv+i].s2 + (*size1);        
+							cv[num_cur_cv+i].t1 = cv[num_cur_cv+i].t1 + (*size1);        
+							cv[num_cur_cv+i].t2 = cv[num_cur_cv+i].t2 + (*size1);        
+							cv[num_cur_cv+i].a1 = cv[num_cur_cv+i].a1 + (*size1);        
+							cv[num_cur_cv+i].a2 = cv[num_cur_cv+i].a2 + (*size1);        
+							cv[num_cur_cv+i].b1 = cv[num_cur_cv+i].b1 + (*size1);        
+							cv[num_cur_cv+i].b2 = cv[num_cur_cv+i].b2 + (*size1);
+						}
+					}
+					num_cur_cv = num_cur_cv + num_dup_cv;
+				}
+				*num_cv = num_cur_cv;
+			}
+
+			reorder_dups(sorted1, num_algns, algns, size, STRICT, init_algns, *num_init_algns, f, avg_pid, cv, num_cv, ops, num_ops, exons, num_exons, genes, num_genes, old_dups, num_old_dups, run_mode, *size1); 
+			free(sorted1);
+		}
 		ops[*num_ops].sign = 's';
 		*num_ops = *num_ops + 1;
-
 	} 
 
 	scaling_value = (float)1;
@@ -955,7 +984,6 @@ int main(int argc, char **argv)
 	free(left_sp);
 
 	if( is_gc_given == TRUE ) {
-		free(sorted1);
 		free(sp_code);
 		free(skip_reg1);
 		free(skip_reg2);
@@ -1081,7 +1109,7 @@ int main(int argc, char **argv)
 
 			if( (run_mode == MANY_TO_MANY) || (run_mode == CONTENT_ORTHO) || (run_mode == POSITION_ORTHO)) {
 				if( is_event_output_required == true ) {
-					g = ckopen(argv[5], "w");
+					g = ckopen(argv[7], "w");
 					fprintf(g, "# %s %s\n", species, species2);
 					for( i = 0; i < num_dup_ops; i++ ) {
 						strcpy(temp_name1, species);
@@ -1187,7 +1215,7 @@ int main(int argc, char **argv)
 
 		if( run_mode != INF_DUP ) {
 //			write_init_maf(stdout, init_algns, *num_init_algns, species, species2, *size1, *size2, f, PAIR);
-			write_init_maf_stdout(init_algns, *num_init_algns, contigs1, contigs2, *size1, *size2, f, PAIR);
+			write_init_maf_stdout(init_algns, *num_init_algns, contigs1, contigs2, *size1, *size2, f, PAIR, species, species2);
 		}
 	}
 	else {
@@ -1198,8 +1226,8 @@ int main(int argc, char **argv)
 	fclose(f);
 
 	if( is_contig_printed == true ) { // argc == 9
-		output_contigs(argv[6], contigs1, len_sum1, *num_contigs1);
-		output_contigs(argv[7], contigs2, len_sum2, *num_contigs2);
+		output_contigs(argv[8], contigs1, len_sum1, *num_contigs1);
+		output_contigs(argv[9], contigs2, len_sum2, *num_contigs2);
 	}
 	
 	if( (*num_init_algns) > 0 ) {

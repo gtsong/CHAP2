@@ -529,87 +529,93 @@ void check_loc_one_side(struct slist *sorted, int *num_pair, struct DotList *pai
 	num_algns = *num_pair;
 
 	i = 0;
-	while( (i < num_algns) && ((pair_alg[sorted[i].id].sign == DELETED) || (pair_alg[sorted[i].id].sign == OUT_PAR) || (pair_alg[sorted[i].id].sign == OUT_PAR_REV) || (pair_alg[sorted[i].id].pair_self == SELF)) ) i++;
 
-	start = i;
-	if((pair_alg[sorted[start].id].sign == ORTHO) || (pair_alg[sorted[start].id].sign == ORTHO_CANDI) || (pair_alg[sorted[start].id].sign == 0)) prev_end = pair_alg[sorted[start].id].y.upper;
-	else prev_end = pair_alg[sorted[start].id].y.lower;
+	if( num_algns > 0 ) {
+		while( (i < num_algns) && ((pair_alg[sorted[i].id].sign == DELETED) || (pair_alg[sorted[i].id].sign == OUT_PAR) || (pair_alg[sorted[i].id].sign == OUT_PAR_REV) || (pair_alg[sorted[i].id].pair_self == SELF)) ) i++;
 
-	i = start+1;
-	while( i < num_algns ) // (i-1)th is prev_end
-	{
-		if( (pair_alg[sorted[i].id].sign == DELETED) || (pair_alg[sorted[i].id].pair_self == SELF) || (pair_alg[sorted[i].id].sign == OUT_PAR) || (pair_alg[sorted[i].id].sign == OUT_PAR_REV) ) 
-		{
-			i++;
+		start = i;
+
+		if( start < num_algns ) {
+			if((pair_alg[sorted[start].id].sign == ORTHO) || (pair_alg[sorted[start].id].sign == ORTHO_CANDI) || (pair_alg[sorted[start].id].sign == 0)) prev_end = pair_alg[sorted[start].id].y.upper;
+			else prev_end = pair_alg[sorted[start].id].y.lower;
 		}
-		else if( (pair_alg[sorted[i].id].sign == ORTHO) || (pair_alg[sorted[i].id].sign == ORTHO_CANDI) || (pair_alg[sorted[i].id].sign == 0) || (pair_alg[sorted[i].id].sign == ORTHO_COMP) || (pair_alg[sorted[i].id].sign == ORTHO_COMP_CANDI) || (pair_alg[sorted[i].id].sign == 1)) 
+	
+		i = start+1;
+		while( i < num_algns ) // (i-1)th is prev_end
 		{
-			j = i;
+			if( (pair_alg[sorted[i].id].sign == DELETED) || (pair_alg[sorted[i].id].pair_self == SELF) || (pair_alg[sorted[i].id].sign == OUT_PAR) || (pair_alg[sorted[i].id].sign == OUT_PAR_REV) ) 
+			{
+				i++;
+			}
+			else if( (pair_alg[sorted[i].id].sign == ORTHO) || (pair_alg[sorted[i].id].sign == ORTHO_CANDI) || (pair_alg[sorted[i].id].sign == 0) || (pair_alg[sorted[i].id].sign == ORTHO_COMP) || (pair_alg[sorted[i].id].sign == ORTHO_COMP_CANDI) || (pair_alg[sorted[i].id].sign == 1)) 
+			{
+				j = i;
 
-			if( (pair_alg[sorted[j].id].sign == ORTHO) || (pair_alg[sorted[j].id].sign == ORTHO_CANDI) || (pair_alg[sorted[j].id].sign == 0) ) min_d = abs(prev_end - pair_alg[sorted[j].id].y.lower);
-			else if((pair_alg[sorted[j].id].sign == ORTHO_COMP) || (pair_alg[sorted[j].id].sign == ORTHO_COMP_CANDI) || (pair_alg[sorted[j].id].sign == 1)) min_d = abs(prev_end - pair_alg[sorted[j].id].y.upper);
-			id = j;
-
-			count = 1;
-			pre_j = j;
-			j++;
-
-			while( (j < num_algns) && ( (pair_alg[sorted[j].id].pair_self == SELF) || (pair_alg[sorted[j].id].sign == DELETED) || (pair_alg[sorted[j].id].sign == OUT_PAR) || (pair_alg[sorted[j].id].sign == OUT_PAR_REV)) ) j++;
-
-			while( (j < num_algns) && (((pair_alg[sorted[j].id].ctg_id1 == pair_alg[sorted[pre_j].id].ctg_id1) && (strict_almost_equal(pair_alg[sorted[j].id].x, pair_alg[sorted[pre_j].id].x) == true)) || ((pair_alg[sorted[j].id].ctg_id1 == pair_alg[sorted[i].id].ctg_id1) && (f_loose_subset(pair_alg[sorted[j].id].x, pair_alg[sorted[i].id].x, t_val) == true))) ) {
-				cur_sign = pair_alg[sorted[j].id].sign;
-				if( (cur_sign == ORTHO) || (cur_sign == ORTHO_CANDI) || (cur_sign == 0) ) cur_sign = 0;
-				else if( (cur_sign == ORTHO_COMP) || (cur_sign == ORTHO_COMP_CANDI) || (cur_sign == 1) ) cur_sign = 1;
-
-				if( cur_sign == 0 ) {
-					d = abs(prev_end - pair_alg[sorted[j].id].y.lower);
-					count++;
-				}
-				else if( cur_sign == 1 ) {
-					d = abs(prev_end - pair_alg[sorted[j].id].y.upper);
-					count++;
-				}
-				
-				if( min_d > d ) {
-					min_d = d;
-					id = j;
-				}
+				if( (pair_alg[sorted[j].id].sign == ORTHO) || (pair_alg[sorted[j].id].sign == ORTHO_CANDI) || (pair_alg[sorted[j].id].sign == 0) ) min_d = abs(prev_end - pair_alg[sorted[j].id].y.lower);
+				else if((pair_alg[sorted[j].id].sign == ORTHO_COMP) || (pair_alg[sorted[j].id].sign == ORTHO_COMP_CANDI) || (pair_alg[sorted[j].id].sign == 1)) min_d = abs(prev_end - pair_alg[sorted[j].id].y.upper);
+				id = j;
+	
+				count = 1;
 				pre_j = j;
 				j++;
 
-				while( (j < num_algns) && ((pair_alg[sorted[j].id].sign == DELETED) || (pair_alg[sorted[j].id].pair_self == SELF) || (pair_alg[sorted[j].id].sign == OUT_PAR) || (pair_alg[sorted[j].id].sign == OUT_PAR_REV)) ) j++;
-			}
+				while( (j < num_algns) && ( (pair_alg[sorted[j].id].pair_self == SELF) || (pair_alg[sorted[j].id].sign == DELETED) || (pair_alg[sorted[j].id].sign == OUT_PAR) || (pair_alg[sorted[j].id].sign == OUT_PAR_REV)) ) j++;
 
-			if( count >= 2 ) {
-				if( j > num_algns ) j = num_algns;
-				for( k = i; k < j; k++ ) {
-					cur_sign = pair_alg[sorted[k].id].sign;
+				while( (j < num_algns) && (((pair_alg[sorted[j].id].ctg_id1 == pair_alg[sorted[pre_j].id].ctg_id1) && (strict_almost_equal(pair_alg[sorted[j].id].x, pair_alg[sorted[pre_j].id].x) == true)) || ((pair_alg[sorted[j].id].ctg_id1 == pair_alg[sorted[i].id].ctg_id1) && (f_loose_subset(pair_alg[sorted[j].id].x, pair_alg[sorted[i].id].x, t_val) == true))) ) {
+					cur_sign = pair_alg[sorted[j].id].sign;
 					if( (cur_sign == ORTHO) || (cur_sign == ORTHO_CANDI) || (cur_sign == 0) ) cur_sign = 0;
 					else if( (cur_sign == ORTHO_COMP) || (cur_sign == ORTHO_COMP_CANDI) || (cur_sign == 1) ) cur_sign = 1;
 
-					if( k != id ) {
-						if( cur_sign == 0 ) pair_alg[sorted[k].id].sign = OUT_PAR;
-						else if( cur_sign == 1 ) pair_alg[sorted[k].id].sign = OUT_PAR_REV;
+					if( cur_sign == 0 ) {
+						d = abs(prev_end - pair_alg[sorted[j].id].y.lower);
+						count++;
 					}
-				}					
+					else if( cur_sign == 1 ) {
+						d = abs(prev_end - pair_alg[sorted[j].id].y.upper);
+						count++;
+					}
+					
+					if( min_d > d ) {
+						min_d = d;
+						id = j;
+					}
+					pre_j = j;
+					j++;
 
-				cur_sign = pair_alg[sorted[id].id].sign;
-				if( (cur_sign == ORTHO) || (cur_sign == ORTHO_CANDI) || (cur_sign == 0) ) cur_sign = 0;
-				else if( (cur_sign == ORTHO_COMP) || (cur_sign == ORTHO_COMP_CANDI) || (cur_sign == 1) ) cur_sign = 1;
-				if( cur_sign == 0 ) prev_end = pair_alg[sorted[id].id].y.upper;
-				else if( cur_sign == 1 ) prev_end = pair_alg[sorted[id].id].y.lower;
-				i = j;
+					while( (j < num_algns) && ((pair_alg[sorted[j].id].sign == DELETED) || (pair_alg[sorted[j].id].pair_self == SELF) || (pair_alg[sorted[j].id].sign == OUT_PAR) || (pair_alg[sorted[j].id].sign == OUT_PAR_REV)) ) j++;
+				}
+
+				if( count >= 2 ) {
+					if( j > num_algns ) j = num_algns;
+					for( k = i; k < j; k++ ) {
+						cur_sign = pair_alg[sorted[k].id].sign;
+						if( (cur_sign == ORTHO) || (cur_sign == ORTHO_CANDI) || (cur_sign == 0) ) cur_sign = 0;
+						else if( (cur_sign == ORTHO_COMP) || (cur_sign == ORTHO_COMP_CANDI) || (cur_sign == 1) ) cur_sign = 1;
+	
+						if( k != id ) {
+							if( cur_sign == 0 ) pair_alg[sorted[k].id].sign = OUT_PAR;
+							else if( cur_sign == 1 ) pair_alg[sorted[k].id].sign = OUT_PAR_REV;
+						}
+					}					
+
+					cur_sign = pair_alg[sorted[id].id].sign;
+					if( (cur_sign == ORTHO) || (cur_sign == ORTHO_CANDI) || (cur_sign == 0) ) cur_sign = 0;
+					else if( (cur_sign == ORTHO_COMP) || (cur_sign == ORTHO_COMP_CANDI) || (cur_sign == 1) ) cur_sign = 1;
+					if( cur_sign == 0 ) prev_end = pair_alg[sorted[id].id].y.upper;
+					else if( cur_sign == 1 ) prev_end = pair_alg[sorted[id].id].y.lower;
+					i = j;
+				}
+				else {
+					cur_sign = pair_alg[sorted[i].id].sign;
+					if( (cur_sign == ORTHO) || (cur_sign == ORTHO_CANDI) || (cur_sign == 0) ) cur_sign = 0;
+					else if( (cur_sign == ORTHO_COMP) || (cur_sign == ORTHO_COMP_CANDI) || (cur_sign == 1) ) cur_sign = 1;
+					if( cur_sign == 0 ) prev_end = pair_alg[sorted[i].id].y.upper;
+					else if( cur_sign == 1 ) prev_end = pair_alg[sorted[i].id].y.lower;
+					i++;
+				}
 			}
-			else {
-				cur_sign = pair_alg[sorted[i].id].sign;
-				if( (cur_sign == ORTHO) || (cur_sign == ORTHO_CANDI) || (cur_sign == 0) ) cur_sign = 0;
-				else if( (cur_sign == ORTHO_COMP) || (cur_sign == ORTHO_COMP_CANDI) || (cur_sign == 1) ) cur_sign = 1;
-				if( cur_sign == 0 ) prev_end = pair_alg[sorted[i].id].y.upper;
-				else if( cur_sign == 1 ) prev_end = pair_alg[sorted[i].id].y.lower;
-				i++;
-			}
+			else i++;
 		}
-		else i++;
 	}
 }
 

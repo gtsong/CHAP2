@@ -138,20 +138,19 @@ int read_genes(FILE *f, struct g_list *genes, char *fname)
       else if( sscanf(buf+1, "%s %s %s", item1, item2, item3) != 3 ) {
         fatalf("%s: unsupported format in the %s file\n", buf, fname);
       }
+
+      if( (is_all_digits(item1) == true) && (is_all_digits(item2) == true) )
+      {
+        b = atoi(item1);
+        e = atoi(item2);
+        if( b >= e ) {
+          fatalf("%s includes an incorrect interval in the %s file\n", buf, fname);
+        }
+      }
       else {
-        if( (is_all_digits(item1) == true) && (is_all_digits(item2) == true) )
-        {
-          b = atoi(item1);
-          e = atoi(item2);
-          if( b >= e ) {
-            fatalf("%s includes an incorrect interval in the %s file\n", buf, fname);
-          }
-        }
-        else {
-          fatalf("%s: unsupported format in the %s codex file\n", buf, fname);
-        }
-				strcpy(genes[i].sp_name, "");
-			}
+        fatalf("%s: unsupported format in the %s codex file\n", buf, fname);
+      }
+			strcpy(genes[i].sp_name, "");
 
 //			sscanf(buf, "%*s %d %d %s %*s", &b, &e, name);
 	    genes[i].gid = i;
@@ -161,11 +160,9 @@ int read_genes(FILE *f, struct g_list *genes, char *fname)
     	i++;
 		}
 		else {
-      if( sscanf(buf+1, "%s %s", item1, item2) == 1 ) {
+      if( sscanf(buf, "%s %s", item1, item2) != 2 ) {
         fatalf("%s: unsupported format in the %s file\n", buf, fname);
       }
-      else if( sscanf(buf+1, "%s %s", item1, item2) == 0 ) {
-			}
       else {
         if( (is_all_digits(item1) == true) && (is_all_digits(item2) == true) )
         {

@@ -67,11 +67,14 @@ int main(int argc, char **argv)
 	struct n_pair *contigs1, *contigs2;
 	int *num_contigs1, *num_contigs2;
 	int *len_sum1, *len_sum2;
+	char *status;
+	bool is_written = false;
+
 //	int ctg_id1 = -1, ctg_id2 = -1;
 //	int index = -1;
 
 	debug_mode = FALSE;
-	if( argc == 3 ) { 
+	if( (argc == 3) || (argc == 5) ) { 
 		if( strcmp(argv[2], "debug-mode") == 0 ) {
 			debug_mode = TRUE;
 //			run_mode = INF_DUP;
@@ -85,6 +88,11 @@ int main(int argc, char **argv)
 		else {
 			fatal("args: dots-file and mode (many-to-many, one-to-many, or one-to-one) ) \n");
 //			run_mode = INC_CONV;
+		}
+
+		if( argc == 5 ) {
+			strcpy(species, argv[3]);
+			strcpy(species2, argv[4]);
 		}
 	}
 	else if( argc == 4 ) {
@@ -128,11 +136,14 @@ int main(int argc, char **argv)
 		fatalf("file %s does not exist\n", argv[1]);
 	}
 
-	while(fgets(S, BIG, f)) {
+	while( (status = fgets(S, BIG, f)) != NULL ) {
 		if( S[0] == '#' ) {
-			while( S[0] == '#' ) {
-				fgets(S, BIG, f);
-				if( strncmp(S, "##maf", 5) == 0 ) {
+			while( (status != NULL ) && (S[0] == '#') ) {
+				status = fgets(S, BIG, f);
+				if( (status != NULL) && (strncmp(S, "##maf", 5) == 0) ) {
+					if( sscanf(S, "%*s %*s %*s %s %s", species, species2) != 2 ) {
+						fatalf("No species info in ##maf line: %s\n", S);
+					}
 					num_a[algn_type] = count;
 					algn_type++;
 					count = 0;
@@ -148,7 +159,7 @@ int main(int argc, char **argv)
 			count = 0;	
 		}
 
-  	if( S[0] == 'a' ) {
+  	if( (status != NULL ) && (S[0] == 'a') ) {
 			if( (algn_type == -1) || (algn_type > PAIR) ) {
 				fatal("The input is not a ##maf file\n");
 			}
@@ -399,7 +410,10 @@ int main(int argc, char **argv)
 						redo_dups_for_mtom(*num_ops, ops, *num_init_algns, init_algns, f, SELF2);
 					}
 				}
-				if( (run_mode == ONE_TO_ONE) || (run_mode == ONE_TO_MANY) || (run_mode == MANY_TO_MANY) ) write_init_maf_stdout(init_algns, *num_init_algns, contigs1, contigs2, len_sum1, len_sum2, *num_contigs1, *num_contigs2, *size1, *size2, f, PAIR);
+				if( (run_mode == ONE_TO_ONE) || (run_mode == ONE_TO_MANY) || (run_mode == MANY_TO_MANY) ) {
+					write_init_maf_stdout(init_algns, *num_init_algns, contigs1, contigs2, len_sum1, len_sum2, *num_contigs1, *num_contigs2, *size1, *size2, f, PAIR, species, species2);
+					is_written = true;
+				}	
 				rollback_sp(algns, num_algns, init_algns, *num_init_algns, *num_ops, ops, SELF2);
 				mode = AFTER_SP;
 				opt_id = 0;
@@ -421,7 +435,13 @@ int main(int argc, char **argv)
 
 	fclose(f);
 
-	if( count > 0 ) {
+	if( is_written == false ) {
+		if( (run_mode == ONE_TO_ONE) || (run_mode == ONE_TO_MANY) || (run_mode == MANY_TO_MANY) ) 
+		{
+			printf("##maf version=1 scoring=lastz-pid %s %s\n", species, species2);
+		}
+	}
+	else if( count > 0 ) {
 		free(algns);
 		free(init_algns);
 		free(ops_cur_pos);

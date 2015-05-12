@@ -135,6 +135,16 @@ int main(int argc, char **argv)
 //		map_genes(algns, *num_algns, exons1, *num_exons1, genes1, *num_genes1, genes2, *num_genes2, f); 
 		map_genes_partition(algns, *num_algns, exons1, *num_exons1, genes1, *num_genes1, genes2, *num_genes2, f); 
 	}
+	else {
+		for( i = 0; i < (*num_genes2); i++ ) {
+      if( strstr(genes2[i].name, "_ps") != NULL ) {
+        printf("\t\\%d;", -1);
+      }
+      else {
+        printf("\t%d;", -1);
+			}
+		}
+	}
 	printf("\n");
 
 	fclose(f);

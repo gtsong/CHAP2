@@ -266,7 +266,7 @@ int main(int argc, char **argv)
 
 	merge_sep_contigs(ortho_algns, *num_ortho, &contigs1, num_contigs1, num_alloc1, &len_sum1, &contigs2, num_contigs2, num_alloc2, &len_sum2);
 	merge_sep_contigs(symm_ortho_algns, *num_symm_ortho, &contigs2, num_contigs2, num_alloc2, &len_sum2, &contigs1, num_contigs1, num_alloc1, &len_sum1);
-	count = count_local_algns(argv[4], species, species2);
+	count = count_local_algns(argv[4], species2, species);
 	if( count > 0 ) {
 		symm_algns = (struct DotList *) ckalloc(count * sizeof(struct DotList));
 		initialize_algns(symm_algns, 0, count);
@@ -335,10 +335,10 @@ int main(int argc, char **argv)
 //	replace_contigs_len(contigs2, *num_contigs2);
 
 	h = ckopen(argv[5], "w");
-	write_init_maf(h, ortho_algns, *num_ortho, contigs1, contigs2, *num_contigs1, *num_contigs2, f, PAIR);
+	write_init_maf(h, ortho_algns, *num_ortho, contigs1, contigs2, *num_contigs1, *num_contigs2, f, PAIR, species, species2);
 	fclose(h);
 	h = ckopen(argv[6], "w");
-	write_init_maf(h, symm_ortho_algns, *num_symm_ortho, contigs2, contigs1, *num_contigs2, *num_contigs1, g, PAIR);
+	write_init_maf(h, symm_ortho_algns, *num_symm_ortho, contigs2, contigs1, *num_contigs2, *num_contigs1, g, PAIR, species2, species);
 	fclose(h);
 
 	fclose(g);

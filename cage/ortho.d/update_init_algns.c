@@ -824,7 +824,7 @@ void rollback_init_dots(struct DotList *algns, int id, bool is_x, int num_algns,
 }
 
 // flag is SELF1, SELF2 or PAIR
-void write_init_maf(FILE *output_f, struct DotList *init_algns, int num_algns, char *sp1_name, char *sp2_name, int len1, int len2, FILE *fp, int flag)
+void write_init_maf(FILE *output_f, struct DotList *init_algns, int num_algns, char *sp1_name, char *sp2_name, int len1, int len2, FILE *fp, int flag, char *species, char *species2)
 {
 	char S2[BIG], T2[BIG];
 	struct b_list *a_info;
@@ -847,7 +847,7 @@ void write_init_maf(FILE *output_f, struct DotList *init_algns, int num_algns, c
   a_info->strand = '+';
   a_info->pid = 0;
 
-  fprintf(output_f, "##maf version=1 scoring=lastz-pid\n");
+  fprintf(output_f, "##maf version=1 scoring=lastz-pid %s %s\n", species, species2);
 
 	for( i = 0; i < num_algns; i++ ) 
 	{
@@ -1105,7 +1105,7 @@ void update_init_algn_del(struct DotList *dots, int cmp_id, struct I del_reg, bo
 	free(cid_list);
 }
 
-void write_init_maf_stdout(struct DotList *init_algns, int num_algns, struct n_pair *contigs1, struct n_pair *contigs2, int *len_sum1, int *len_sum2, int num1, int num2, int len1, int len2, FILE *fp, int flag)
+void write_init_maf_stdout(struct DotList *init_algns, int num_algns, struct n_pair *contigs1, struct n_pair *contigs2, int *len_sum1, int *len_sum2, int num1, int num2, int len1, int len2, FILE *fp, int flag, char *species, char *species2)
 {
 	char S2[BIG], T2[BIG];
 	struct b_list *a_info;
@@ -1170,7 +1170,7 @@ void write_init_maf_stdout(struct DotList *init_algns, int num_algns, struct n_p
 		fatalf("illegal negative number: %d\n", num1);
 	}
 
-  printf("##maf version=1 scoring=lastz-pid\n");
+  printf("##maf version=1 scoring=lastz-pid %s %s\n", species, species2);
 
 	for( i = 0; i < num_algns; i++ ) 
 	{

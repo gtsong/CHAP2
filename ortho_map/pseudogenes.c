@@ -150,7 +150,9 @@ int main(int argc, char **argv)
   candi_ps = (struct exons_list *) ckalloc(ALLOC_UNIT * sizeof(struct exons_list));
   initialize_exons_list(candi_ps, 0, ALLOC_UNIT);
 
-	find_pseudogenes(genes2, num_genes2, genes1, num_genes1, exons1, num_exons1, algns, *num_algns, f, &candi_ps, num_candi, num_alloc);
+	if( (*num_algns) > 0 ) {
+		find_pseudogenes(genes2, num_genes2, genes1, num_genes1, exons1, num_exons1, algns, *num_algns, f, &candi_ps, num_candi, num_alloc);
+	}
 
 	if( (*num_candi) > 0 ) {
 		sort_exons(candi_ps, *num_candi);
