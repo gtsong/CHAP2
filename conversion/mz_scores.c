@@ -3,7 +3,7 @@
 #include "util.h"
 #include "mz_scores.h"
 
-static const char rcsid[] = "$Id: mz_scores.c,v 1.3 2006-02-03 21:05:54 mhou Exp $";
+//static const char rcsid[] = "$Id: mz_scores.c,v 1.3 2006-02-03 21:05:54 mhou Exp $";
 
 
 int **ss70, **ss85, *gop70, *gop85;

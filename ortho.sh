@@ -141,11 +141,11 @@ do
 		if [ $sp2 != $sp1 ]
 		then
 			echo "orthologous mappings by context and content between $sp1 and $sp2"
-			$BIN/ortho_map $CAGE_DATA/$sp1.$sp2.maf position-ortho non-redundant.gc $TEMP/all.codex > $ORTHO_X1/$sp1.$sp2.maf
+			$BIN/ortho_map $CAGE_DATA/$sp1.$sp2.maf position-ortho $sp1 $sp2 non-redundant.gc $TEMP/all.codex > $ORTHO_X1/$sp1.$sp2.maf
 
 			if [ $sp1 = $ref_sp ]
 			then
-				$BIN/ortho_map $CAGE_DATA/$sp1.$sp2.maf content-ortho non-redundant.gc $TEMP/all.codex $TEMP/$sp1.$sp2.ops $CONTIGS/$sp1.contigs.list $CONTIGS/$sp2.contigs.list > $ORTHO_N1/$sp1.$sp2.maf
+				$BIN/ortho_map $CAGE_DATA/$sp1.$sp2.maf content-ortho $sp1 $sp2 non-redundant.gc $TEMP/all.codex $TEMP/$sp1.$sp2.ops $CONTIGS/$sp1.contigs.list $CONTIGS/$sp2.contigs.list > $ORTHO_N1/$sp1.$sp2.maf
 			fi
 		fi
 	done
@@ -157,11 +157,11 @@ i=0
 for sp1 in `ls $USER_SEQ`
 do
 	j=0
-	echo "adjusting orthology for $sp1"
 	for sp2 in `ls $USER_SEQ`
 	do
 		if [ $j -gt $i ]
 		then
+			echo "adjusting orthology for $sp1 and $sp2"
 			$BIN/adjust_symmetry $ORTHO_X1/$sp1.$sp2.maf $ORTHO_X1/$sp2.$sp1.maf $CAGE_CHAIN/$sp1.$sp2.maf $CAGE_CHAIN/$sp2.$sp1.maf $ORTHO_X2/$sp1.$sp2.maf $ORTHO_X2/$sp2.$sp1.maf $CONTIGS/$sp1.contigs.list $CONTIGS/$sp2.contigs.list
 		fi
 		j=`expr $j + 1`

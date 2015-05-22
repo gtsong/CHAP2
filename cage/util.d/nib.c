@@ -8,8 +8,8 @@
 // XXX -- BUG: after a seek, we are not synchronized.
 // skip to end?
 
-static const char rcsid[] =
-"$Id: nib.c,v 1.6 2002/09/29 04:21:18 schwartz Exp $";
+//static const char rcsid[] =
+//"$Id: nib.c,v 1.6 2002/09/29 04:21:18 schwartz Exp $";
 
 // 
 // First 4 bytes of the nib file are the signature: 0x6BE93D3A. 

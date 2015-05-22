@@ -77,8 +77,8 @@ void adjust_plot_pair(struct DotList *dots, int *num, struct kdnode *tree, struc
 
 int find_id_pair(struct DotList *dots, struct kdnode *tree, int size1, int size2, int id, int xval, int yval, int option)
 {
-	int res_id;
-	int	x, y;
+	int res_id = 0;
+	int	x = 1, y = size2;
 
 	if( option == W_SID )
 	{
@@ -105,7 +105,8 @@ int find_id_pair(struct DotList *dots, struct kdnode *tree, int size1, int size2
 		if( y <= 0 ) y = 1;
 		res_id = find_pred_blk(tree, x, y);
 	}
-	else if( option == H_FID )
+//	else if( option == H_FID )
+	else // option == H_FID
 	{
 		x = xval + RANGE_TH;
 		if( dots[id].sign == 0 ) y = yval + RANGE_TH;
@@ -120,8 +121,8 @@ int find_id_pair(struct DotList *dots, struct kdnode *tree, int size1, int size2
 
 int find_id(struct DotList *dots, struct kdnode *tree, int size, int id, int xval, int yval, int option)
 {
-	int res_id;
-	int	x, y;
+	int res_id = 0;
+	int	x = 1, y = size;
 
 	if( option == W_SID )
 	{
@@ -148,7 +149,8 @@ int find_id(struct DotList *dots, struct kdnode *tree, int size, int id, int xva
 		if( y <= 0 ) y = 1;
 		res_id = find_pred_blk(tree, x, y);
 	}
-	else if( option == H_FID )
+//	else if( option == H_FID )
+	else // option == H_FID 
 	{
 		x = xval + RANGE_TH;
 		if( dots[id].sign == 0 ) y = yval + RANGE_TH;

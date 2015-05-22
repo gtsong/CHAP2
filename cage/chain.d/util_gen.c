@@ -335,6 +335,7 @@ void initialize_algns(struct DotList *temp, int count)
 		temp[i].yl_offset = 0; 
 		temp[i].len1 = 0; 
 		temp[i].len2 = 0; 
+  	temp[i].index = 0;
 		strcpy(temp[i].name1, "");
 		strcpy(temp[i].name2, "");
   }

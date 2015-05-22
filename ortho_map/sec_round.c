@@ -404,23 +404,32 @@ struct slist latest_dup(struct DotList *candi_algns, int num_candi, int size, in
 	struct slist *op_info;
 	int i = 0, j = 0;
 	int cur_id = 0;
-	int *num_x, *num_y;
+	int *num_x = NULL, *num_y = NULL;
 	int num_ins_regs = 0;
-	int pred_op;
-	int *add_info;
+	int pred_op = NO_OVERLAP;
+	int *add_info = NULL;
 	int opt_id = -1;
-	struct slist res_list;
-	int sp_state;
-	int h_pid;
-	int side;
-	int run_no;
-	int num_overlap, pid_th;
-	bool *is_exist;
+	struct slist res_list = {0, 0, 0, NO_OVERLAP, NO_OVERLAP, true};
+	int sp_state = NO_OVERLAP;
+	int h_pid = 0;
+	int side = TIE;
+	int run_no = FIRST_RUN;
+	int num_overlap = 0, pid_th = 0;
+	bool *is_exist = NULL;
 	int index = -1;
 	int critical_side = TIE;
 
 	if( num_candi > 0 ) {
 		op_info = (struct slist *) ckalloc(sizeof(struct slist) * num_candi);
+		initialize_slist(op_info, 0, num_candi);
+		for( i = 0; i < num_candi; i++ ) {
+			op_info[i].id = -1;
+			op_info[i].val = -1;
+			op_info[i].val_red = -1;
+			op_info[i].sp_state = -1;
+			op_info[i].add_sp_state = -1;
+			op_info[i].is_x = true;
+		}
 	}
 	num_x = (int *) ckalloc(sizeof(int));
 	num_y = (int *) ckalloc(sizeof(int));
@@ -433,16 +442,6 @@ struct slist latest_dup(struct DotList *candi_algns, int num_candi, int size, in
 	res_list.sp_state = NO_OVERLAP;
 	res_list.add_sp_state = NO_OVERLAP;
 	res_list.is_x = true;
-
-	initialize_slist(op_info, 0, num_candi);
-	for( i = 0; i < num_candi; i++ ) {
-		op_info[i].id = -1;
-		op_info[i].val = -1;
-		op_info[i].val_red = -1;
-		op_info[i].sp_state = -1;
-		op_info[i].add_sp_state = -1;
-		op_info[i].is_x = true;
-	}
 
 	*num_x = 0;
 	*num_y = 0;

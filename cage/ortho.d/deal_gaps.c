@@ -6,10 +6,10 @@
 
 struct gap_list define_gap_new_type_inc(struct DotList *dots, int loc_id, int comp_id, bool is_x)
 {
-	struct gap_list gp;
-	int len_dif;
-	int sm_id, lg_id;
-	int diff;
+	struct gap_list gp = {0, -1, -1, -1, 0, 0, 1, 1, 0};
+	int len_dif = 0;
+	int sm_id = -1, lg_id = -1;
+	int diff = 0;
 
 	gp.type = -1;
 	if( is_x == true ) // the overlap is in x region
@@ -277,11 +277,11 @@ struct gap_list define_gap_new_type(struct DotList *dots, int loc_id, int comp_i
 
 struct gap_list define_gap(struct DotList *dots, int loc_id, int comp_id, int d, int sd, bool is_x)
 {
-	int from, to;
-	int from_1, to_1;
-	struct gap_list gp;
-	struct I temp;
-	int m_th;
+	int from = 0, to = 1;
+	int from_1 = 0, to_1 = 1;
+	struct gap_list gp = {0, -1, -1, -1, 0, 0, 1, 1, 0};
+	struct I temp = {0, 1};
+	int m_th = L_M_TH;
 
 	gp.type = 3;
 	gp.id1 = loc_id;
@@ -538,7 +538,7 @@ struct gap_list redefine_for_del(struct DotList *dots, struct gap_list gps) // w
 
 int get_starting_loc(struct DotList *dots, int loc, int comp, bool is_x)
 {
-	int from;
+	int from = dots[loc].x.upper;
 
 	if( is_x == true )
 	{
@@ -575,7 +575,8 @@ int get_starting_loc(struct DotList *dots, int loc, int comp, bool is_x)
 				}
 			}
 		}		
-		else if( dots[loc].sign == 1 )
+//		else if( dots[loc].sign == 1 )
+		else // dots[loc].sign == 1 
 		{
 			if( dots[loc].x.lower < dots[comp].x.lower )
 			{

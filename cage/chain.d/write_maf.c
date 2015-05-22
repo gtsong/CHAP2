@@ -11,15 +11,15 @@ extern int debug_mode;
 
 void write_maf(char *fname, struct DotList *algns, int num_algns, struct r_list *rp1, struct r_list *rp2, int len1, int len2, FILE *g, char *species, char *species2)
 {
-	int i;
-	int *cid;
-	bool *is_written;
-	FILE *f;
-	int pid;
-	struct b_list *binfo;
-	char S1[BIG], T1[BIG];
-	int num_col;
-	int len;
+	int i = 0;
+	int *cid = NULL;
+	bool *is_written = NULL;
+	FILE *f = NULL;
+	int pid = 0;
+	struct b_list *binfo = NULL;
+	char S1[BIG] = "", T1[BIG] = "";
+	int num_col = 0;
+	int len = 0;
 
 	cid = (int *) ckalloc(num_algns * sizeof(int));
 	is_written = (bool *) ckalloc(num_algns * sizeof(bool));
@@ -79,16 +79,16 @@ void write_maf(char *fname, struct DotList *algns, int num_algns, struct r_list 
 
 void adjust_two_ch_algns(struct DotList *algns, int id1, int id2, int beg1, int beg2, FILE *fp, int *fst_end, int *sec_beg, bool is_x, struct r_list *rp1, struct r_list *rp2, int rp_id1, int rp_id2) // id1 is algns[id1].index
 {
-	char S1[BIG], S2[BIG], T1[BIG], T2[BIG];
-	struct b_list *a1_info, *a2_info;
-	int i, j, len;
-	int t_b, t_e;
-	float pid1, pid2;
-	int s1, s2, e1;
-	int t1, t2;
+	char S1[BIG] = "", S2[BIG] = "", T1[BIG] = "", T2[BIG] = "";
+	struct b_list *a1_info = NULL, *a2_info = NULL;
+	int i = 0, j = 0, len = 0;
+	int t_b = 0, t_e = 1;
+	float pid1 = 0, pid2 = 0;
+	int s1 = 0, s2 = 0, e1 = 1;
+	int t1 = 1, t2 = 1;
 	int cut_len1 = 0, cut_len2 = 0;
-	int end_pos, end_pos2;
-	int fid1, fid2;
+	int end_pos = 0, end_pos2 = 0;
+	int fid1 = -1, fid2 = -1;
 
 	fid1 = algns[id1].fid;
 	fid2 = algns[id2].fid;
@@ -344,19 +344,19 @@ void adjust_two_ch_algns(struct DotList *algns, int id1, int id2, int beg1, int 
 
 int get_algn_ch(char *S1, char *T1, struct DotList algn, struct DotList *init_algns, FILE *fp, struct r_list *rp1, struct r_list *rp2, struct b_list *binfo, int *cid,  bool *is_written)
 {
-	int old_id, cur_id;
-	int *sec_beg, *fst_end;
-	int f_len; // f_len is the length of nucleotides already saved in S1 and T1 
-	int b;
-	struct I temp;
-	int y_old, y_cur;
-	struct b_list *a_info;
-	int i;
+	int old_id = -1, cur_id = -1;
+	int *sec_beg = NULL, *fst_end = NULL;
+	int f_len = 0; // f_len is the length of nucleotides already saved in S1 and T1 
+	int b = 0;
+	struct I temp = {0, 1};
+	int y_old = 0, y_cur = 0;
+	struct b_list *a_info = NULL;
+	int i = 0;
 	int beg1 = 0, beg2 = 0;
-	int rp1_id, rp2_id;
-	int gap_len1, gap_len2;
-	int t_x1, t_x2, t_y1, t_y2;
-	int e1, e2;
+	int rp1_id = -1, rp2_id = -1;
+	int gap_len1 = 0, gap_len2 = 0;
+	int t_x1 = 0, t_x2 = 0, t_y1 = 1, t_y2 = 1;
+	int e1 = 1, e2 = 1;
 
 	a_info = (struct b_list *) ckalloc(sizeof(struct b_list));
 	sec_beg = (int *) ckalloc(sizeof(int));

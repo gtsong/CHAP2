@@ -15,15 +15,15 @@
 
 void adjust_plot_pair_genes(struct DotList *dots, int *num, struct kdnode *tree, struct perm_pt *p_pts, int size1, int size2, struct r_list *rp1, struct r_list *rp2, int num_rp1, int num_rp2, struct g_list *genes1, struct g_list *genes2, int num_genes1, int num_genes2, struct DotList *init_dots, FILE *fp)
 {
-	struct slist *sorted;
+	struct slist *sorted = NULL;
 	int i = 0;
-	int num_lines;
-	int xval, yval;
-	int w_sid, w_fid, h_sid, h_fid;
-	int opt_id;
-	bool *is_x;
-	int *sd;
-	int *rp1_id, *rp2_id;
+	int num_lines = 0;
+	int xval = 0, yval = 0;
+	int w_sid = 0, w_fid = 0, h_sid = 0, h_fid = 0;
+	int opt_id = 0;
+	bool *is_x = NULL;
+	int *sd = NULL;
+	int *rp1_id = NULL, *rp2_id = NULL;
 
 	is_x = (bool *) ckalloc(sizeof(bool));
 	sd = (int *) ckalloc(sizeof(int));
@@ -31,6 +31,11 @@ void adjust_plot_pair_genes(struct DotList *dots, int *num, struct kdnode *tree,
 	sorted = (struct slist *) ckalloc(num_lines * (sizeof(struct slist)));
 	rp1_id = (int *) ckalloc(sizeof(int));
 	rp2_id = (int *) ckalloc(sizeof(int));
+
+	*is_x = false;
+	*sd = 0;
+	*rp1_id = -1;
+	*rp2_id = -1;
 
 	sort_list(sorted, dots, num_lines);
 
@@ -81,20 +86,20 @@ int find_opt_fr_genes(struct DotList *dots, int id, struct perm_pt *st, int w_si
 	int i = 0;
 	int min_score = 1000;
 	int max_id = -1;
-	bool *is_x;
-	int *sd;
+	bool *is_x = NULL;
+	int *sd = NULL;
 	int d = 0;
-	struct gap_list gps;
+	struct gap_list gps = {-1, -1, -1, -1, -1, 0, 1, 0, 1, "", ""};
 	int temp_score = -1;
 	int start, mid1 = -1, mid2 = -1, end;
-	float *d_rate;
+	float *d_rate = NULL;
 	float min_rate = 100;
 	int len1 = 0, len2 = 0, len = 0, m_th = 0;
 	int op_len = 0, op_len_x = 0, op_len_y = 0;
 	int closeness = 0;
-	struct I temp;
+	struct I temp = {0, 1};
 	int y_cur = 0, y_old = 0;
-	int *id1, *id2;
+	int *id1 = NULL, *id2 = NULL;
 	
 	is_x = (bool *) ckalloc(sizeof(bool));
 	sd = (int *) ckalloc(sizeof(int));
@@ -106,16 +111,6 @@ int find_opt_fr_genes(struct DotList *dots, int id, struct perm_pt *st, int w_si
 	*rp1_id = -1;
 	*rp2_id = -1;
 	temp = assign_I(0, 1);
-
-  gps.type = -1;
-  gps.id1 = -1;
-  gps.id2 = -1;
-  gps.x1 = 0;
-  gps.x2 = 1;
-  gps.y1 = 0;
-  gps.y2 = 1;
-  strcpy(gps.name1, "");
-  strcpy(gps.name2, "");
 
 	if( w_sid < h_sid )
 	{

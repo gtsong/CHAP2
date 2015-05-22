@@ -1252,11 +1252,11 @@ int main(int argc, char **argv)
 
 void output_contigs(char *fname, struct n_pair *contigs, int *old_len_sum, int num_contigs)
 {
-	FILE *f;
+	FILE *f = NULL;
 	int count = 0, i = 0, j = 0;
-	struct n_pair *all_contigs;
+	struct n_pair *all_contigs = NULL;
 	int num_all_contigs = 0;
-	int *len_sum;
+	int *len_sum = NULL;
 
 	f = ckopen(fname, "a+");
 	count = count_lines(f);
@@ -1288,9 +1288,9 @@ void output_contigs(char *fname, struct n_pair *contigs, int *old_len_sum, int n
 				j++;
 			}
 		}
+		fclose(f);
 	}
 	print_contig_list(f, all_contigs, len_sum, num_all_contigs, j);
-	fclose(f);
 
 	if( (count + num_contigs) > 0 ) {
 		free(all_contigs);

@@ -50,8 +50,8 @@ void read_maf(char *fname, int mode, struct DotList *algns, int *num_algns, int 
 	int temp;
 	int a_pid;
 	int b1, e1, b2, e2;
-	char strand[100], len1[100], len2[100];
-	char species1[100], species2[100];
+	char strand[100] = "", len1[100] = "", len2[100] = "";
+	char species1[100] = "", species2[100] = "";
 	char *s, *t;
 	int ncol = 0;
 	int max_len1 = 0, max_len2 = 0;

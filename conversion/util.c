@@ -1,5 +1,5 @@
-static const char rcsid[]=
-"$Id: util.c,v 1.4 2005/01/14 05:22:27 mhou Exp $";
+//static const char rcsid[]=
+//"$Id: util.c,v 1.4 2005/01/14 05:22:27 mhou Exp $";
 
 #include <stdarg.h>
 #include "util.h"

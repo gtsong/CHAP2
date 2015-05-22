@@ -348,13 +348,13 @@ void update_init_algn(struct I reg, struct DotList *dots, int id, bool is_x, int
 
 void adjust_init_algn(struct DotList *init_dots, int id, struct I dup_reg, bool is_x, FILE *fp, int mode, bool dup_is_x) 
 {
-	int cur, old;
-	int loc;
-	int old_diff, new_diff;
-	struct I cur_reg;
-	int b, e;
-	int threshold;
-	int cut_point;
+	int cur = 0, old = 0;
+	int loc = 0;
+	int old_diff = 0, new_diff = 0;
+	struct I cur_reg = {0, 1};
+	int b = 0, e = 1;
+	int threshold = 0;
+	int cut_point = 0;
 	
 	if( is_x == true ) {
 		b = init_dots[id].x.lower + init_dots[id].xl_diff; 
@@ -405,7 +405,8 @@ void adjust_init_algn(struct DotList *init_dots, int id, struct I dup_reg, bool 
 			if( ((mode == DUP) && (cur_reg.lower > dup_reg.lower)) || ((mode == DEL) && (in(cur_reg.lower, dup_reg) == true) && (cur_reg.lower < cut_point) == true)  ) {
 				old_diff = init_dots[id].xl_diff;
 				if( mode == DUP) new_diff = dup_reg.upper - init_dots[id].x.lower;
-				else if( mode == DEL ) new_diff = cut_point - init_dots[id].x.lower;
+//				else if( mode == DEL ) new_diff = cut_point - init_dots[id].x.lower;
+				else new_diff = cut_point - init_dots[id].x.lower; // mode == DEL
 
 				if( new_diff > old_diff ) { 
 					init_dots[id].xl_diff = new_diff;
@@ -1107,8 +1108,8 @@ void update_init_algn_del(struct DotList *dots, int cmp_id, struct I del_reg, bo
 
 void write_init_maf_stdout(struct DotList *init_algns, int num_algns, struct n_pair *contigs1, struct n_pair *contigs2, int *len_sum1, int *len_sum2, int num1, int num2, int len1, int len2, FILE *fp, int flag, char *species, char *species2)
 {
-	char S2[BIG], T2[BIG];
-	struct b_list *a_info;
+	char S2[BIG] = "", T2[BIG] = "";
+	struct b_list *a_info = NULL;
 	int i = 0, j = 0;
 	int beg = 0, end = 0;
 	int pid = 0;
@@ -1117,7 +1118,7 @@ void write_init_maf_stdout(struct DotList *init_algns, int num_algns, struct n_p
 	int gap1 = 0, gap2 = 0;
 	int skip_nu = 0;
 	int len = 0;
-	int *contigs_len1, *contigs_len2;
+	int *contigs_len1 = NULL, *contigs_len2 = NULL;
 	int ctg_id1 = -1, ctg_id2 = -1;
 
 	a_info = (struct b_list *) ckalloc(sizeof(struct b_list));

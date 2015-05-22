@@ -445,7 +445,7 @@ int cal_cur_pos_ops(int num_ops, struct ops_list *ops, struct ops_list *new_ops,
 void update_cur_pos_ops(struct ops_list *ops, int *num_ops, int size1)
 {
 	int num_new1 = 0, num_new2 = 0;
-	struct ops_list *new_ops1, *new_ops2;
+	struct ops_list *new_ops1 = NULL, *new_ops2 = NULL;
 	int i = 0, j = 0;
 
 	num_new1 = *num_ops;
@@ -471,9 +471,8 @@ void update_cur_pos_ops(struct ops_list *ops, int *num_ops, int size1)
 			j++;
 		}
 		*num_ops = j;
+		free(new_ops1);
+		free(new_ops2);
 	}
-
-	free(new_ops1);
-	free(new_ops2);
 }
 

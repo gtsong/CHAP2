@@ -1,6 +1,3 @@
-static const char rcsid[]=
-"$Id: util.c,v 1.7 2002/08/10 16:08:11 schwartz Exp $";
-
 #include <stdarg.h>
 #include "util.h"
 

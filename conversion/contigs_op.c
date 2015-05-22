@@ -8,7 +8,9 @@ int add_ctg_name(int id, char *sp_name, char *ctg_name, int len, struct n_pair *
 
 	num = num_pairs;
 
-	ctg_id = is_ctg_in(sp_name, ctg_name, pairs, num_pairs);
+	if( num_pairs > 0 ) {
+		ctg_id = is_ctg_in(sp_name, ctg_name, pairs, num_pairs);
+	}
 
 	if( ctg_id == -1 ) { // if it's a new contig
 		strcpy(pairs[num].name1, sp_name);
@@ -36,7 +38,7 @@ int is_ctg_in(char *sp_name, char *ctg_name, struct n_pair *pairs, int num_pairs
 			res = i;
 		}
 		else if( strcmp(sp_name, pairs[i].name1) != 0 ) {
-			fatalf("sequence names not match: %s.%s vs. %s.%s in read_maf.c\n", sp_name, ctg_name, pairs[i].name1, pairs[i].name2);
+			fatalf("sequence names not match: %s.%s vs. %s.%s in contigs_op.c\n", sp_name, ctg_name, pairs[i].name1, pairs[i].name2);
 		}
 		i++;
 	}

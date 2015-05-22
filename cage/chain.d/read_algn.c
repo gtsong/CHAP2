@@ -14,12 +14,12 @@ extern int debug_mode;
 void get_nth_algn(char *seq1, char *seq2, int id, int b, FILE *fp, struct b_list *a_info, int mode) 
 {
 	int i = 0;
-	char *status;
-	int b1, e1, b2, e2;
-	char strand[100], len1[100], len2[100];
-	int *beg, *count;
+	char *status = NULL;
+	int b1 = 0, e1 = 1, b2 = 0, e2 = 1;
+	char strand[100] = "", len1[100] = "", len2[100] = "";
+	int *beg = NULL, *count = NULL;
 	bool is_found = false;
-	int pid;
+	int pid = 0;
 
 	beg = (int *) ckalloc(sizeof(int));
 	count = (int *) ckalloc(sizeof(int));

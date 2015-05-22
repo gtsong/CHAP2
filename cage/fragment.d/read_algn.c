@@ -305,9 +305,9 @@ int find_end_xloc(struct DotList algn, FILE *fp, int num_nu) // only NO_GAP_COUN
 int find_xloc_one(struct DotList algn, FILE *fp, int num_nu, int flag) // only NO_GAP_COUNT case needs this function
 {
 	int j = 0, k = 0;
-	struct b_list *a_info;
-	int xloc;
-	char S1[BIG], T1[BIG];
+	struct b_list *a_info = NULL;
+	int xloc = 0;
+	char S1[BIG] = "", T1[BIG] = "";
 
 	a_info = (struct b_list *) ckalloc(sizeof(struct b_list));
 	get_nth_algn(S1, T1, algn.fid, 0, fp, a_info, REG);

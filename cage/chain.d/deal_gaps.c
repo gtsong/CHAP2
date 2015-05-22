@@ -7,10 +7,10 @@
 
 struct gap_list define_gap_new_type_inc(struct DotList *dots, int loc_id, int comp_id, bool is_x)
 {
-  struct gap_list gp;
-  int len_dif;
-  int sm_id, lg_id;
-  int diff;
+  struct gap_list gp = {0, -1, -1, -1, 0, 0, 1, 1, 0, "", ""};
+  int len_dif = 0;
+  int sm_id = -1, lg_id = -1;
+  int diff = 0;
 
   gp.type = -1;
 	gp.id1 = -1;

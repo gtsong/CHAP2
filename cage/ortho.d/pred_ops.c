@@ -8,10 +8,10 @@
 
 void predict_op(bool is_x, int id, int *num_list, struct DotList *dots, int overlap, int num_ops, struct ops_list *ops)
 {
-	char op_ch;
-	int conversion;
-	int pred_op;
-	bool is_x_to_y;
+	char op_ch = '+';
+	int conversion = 0;
+	int pred_op = 3;
+	bool is_x_to_y = true;
 
 	conversion = 0;
 	if( dots[id].sign == 0 )
@@ -24,6 +24,7 @@ void predict_op(bool is_x, int id, int *num_list, struct DotList *dots, int over
 	}
 	else
 	{
+		op_ch = '+';
 	}
 	
 	if( overlap == -1 ) pred_op = 3;
@@ -37,11 +38,11 @@ void predict_op(bool is_x, int id, int *num_list, struct DotList *dots, int over
 
 void pred_dup(int con, char op_ch, int pred_op, bool is_x_to_y, int id, int *num_list, struct DotList *dots, int num_ops, struct ops_list *ops)
 {
-	int wide;
-	struct I from, to;
+	int wide = 0;
+	struct I from = {0, 1}, to = {0, 1};
 	int flag = DEL;
-	int i;
-	int sp_id;
+	int i = 0;
+	int sp_id = dots[id].sp_id;
 
 	sp_id = dots[id].sp_id;
 

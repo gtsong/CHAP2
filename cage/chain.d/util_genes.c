@@ -115,11 +115,11 @@ struct g_list assign_genes(struct g_list a)
 int read_genes(FILE *f, struct g_list *genes, char *fname)
 {
   int num_genes = 0;
-  char buf[1000];
+  char buf[1000] = "";
   int i = 0;
 	int b = 0, e = 0;
-	char name[LEN_NAME];
-	char item1[1000], item2[1000], item3[1000], item4[1000];
+	char name[LEN_NAME] = "";
+	char item1[1000] = "", item2[1000] = "", item3[1000] = "", item4[1000] = "";
 
   i = 0;
   while(fgets(buf, 1000, f))

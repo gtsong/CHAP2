@@ -8,10 +8,10 @@
 
 void print_conv_on_dup(int avg_pid, struct DotList alg, struct cv_list *cv, int num_cv, int *num_ops, struct ops_list *ops, int run_mode)
 {
-	int i;
-	struct I src, dst;
-	int sign;
-	int ops_id;
+	int i = 0;
+	struct I src = {0, 1}, dst = {0, 1};
+	int sign = 0;
+	int ops_id = 0;
 
 	ops_id = *num_ops;
 
@@ -435,7 +435,7 @@ int cal_cur_pos_ops(int num_ops, struct ops_list *ops, struct ops_list *new_ops,
 void update_cur_pos_ops(struct ops_list *ops, int *num_ops, int size1)
 {
 	int num_new1 = 0, num_new2 = 0;
-	struct ops_list *new_ops1, *new_ops2;
+	struct ops_list *new_ops1 = NULL, *new_ops2 = NULL;
 	int i = 0, j = 0;
 
 	num_new1 = *num_ops;

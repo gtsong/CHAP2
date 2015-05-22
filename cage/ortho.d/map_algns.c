@@ -12,21 +12,21 @@ extern int debug_mode;
 void map_one_to_one(int num_init_algns, struct DotList *init_algns, FILE *f)
 {
 	int i = 0, j = 0, k = 0, l = 0;
-	struct slist *sorted;
-	struct I cur, cmp, ov, tmp;
+	struct slist *sorted = NULL;
+	struct I cur = {0, 1}, cmp = {0, 1}, ov = {0, 1}, tmp = {0, 1};
 	int b = -1, e= -1;
 	int flag = TRUE;
-	int cur_id = 0, cmp_id = 0, tmp_id;
-	struct b_list *a1_info, *a2_info;
+	int cur_id = 0, cmp_id = 0, tmp_id = 0;
+	struct b_list *a1_info = NULL, *a2_info = NULL;
 	int cut_len1 = 0, cut_len2 = 0;
-	int end_pos1, end_pos2;
-	float pid1, pid2;
+	int end_pos1 = 0, end_pos2 = 0;
+	float pid1 = (float) 0, pid2 = (float) 0;
 	int beg1 = 0, beg2 = 0;
 	int t_b1 = 0, t_b2 = 0;
-	int *t_b;
+	int *t_b = NULL;
 	int old_pos = 0, cur_pos = 0;
-	struct slist h;
-	char S[BIG], S1[BIG], T[BIG], T1[BIG];
+	struct slist h = {0, 0, 0, 0, 0, true};
+	char S[BIG] = "", S1[BIG] = "", T[BIG] = "", T1[BIG] = "";
 
 	a1_info = (struct b_list *) ckalloc(sizeof(struct b_list));
 	a2_info = (struct b_list *) ckalloc(sizeof(struct b_list));

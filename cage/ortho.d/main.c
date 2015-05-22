@@ -28,46 +28,46 @@ char S1[BIG], T1[BIG];
 
 int main(int argc, char **argv)
 {
-	struct DotList *algns; // the sequence starts at 1 and each range of a segment is a form of [a, b), i.e. the nucleotide at 'a' is included and one at 'b' is not
-	struct DotList *init_algns; 
-	int num_a[3];
+	struct DotList *algns = NULL; // the sequence starts at 1 and each range of a segment is a form of [a, b), i.e. the nucleotide at 'a' is included and one at 'b' is not
+	struct DotList *init_algns = NULL; 
+	int num_a[3] = {0, 0, 0};
 	int count = 0; // the number of the alignments in the initial dot-plot
 	int algn_type = -1; // first self-alignment if SELF1(0), second self-alignment if SELF2(1), and pairwise alignment if PAIR(2)
-	int *num_algns; // the number of local alignments in the dot plot
-	int *num_init_algns; // the number of local alignments in the initial dot plot
+	int *num_algns = NULL; // the number of local alignments in the dot plot
+	int *num_init_algns = NULL; // the number of local alignments in the initial dot plot
 	int num_cur_init = 0;
 
-	int *size1, *size2;
-	int size;
-	bool *is_x;
+	int *size1 = NULL, *size2 = NULL;
+	int size = 0;
+	bool *is_x = NULL;
 	int prev_num = 0;
-	int opt_id;
+	int opt_id = -1;
 
-	int *num_suspend_pairs;
-	struct ID_List *suspend_list; // the suspend list
-	int num_ins_regs;
-	float scaling_value;
-	struct slist rm_list;
+	int *num_suspend_pairs = NULL;
+	struct ID_List *suspend_list = NULL; // the suspend list
+	int num_ins_regs = 0;
+	float scaling_value = (float) 1;
+	struct slist rm_list = {-1, 0, 0, 0, 0, true};
 	
-	int *num_id; // the number of pairs of repeats to be eliminated
-	int *threshold;
-	int i;
-	int num_sp;
-	int *sp_order;
-	int *rm_sp;
-	int *left_sp;
+	int *num_id = NULL; // the number of pairs of repeats to be eliminated
+	int *threshold = NULL;
+	int i = 0;
+	int num_sp = 0;
+	int *sp_order = NULL;
+	int *rm_sp = NULL;
+	int *left_sp = NULL;
 	int cur_num_sp = 0;
-	FILE *f;
-	int maf_mode, mode;
-	char species[100], species2[100];
-	int run_mode; // the default is one-to-one
-	struct ops_list *ops, *ops_cur_pos;
-	int *num_ops;
+	FILE *f = NULL;
+	int maf_mode = 0, mode = 0;
+	char species[100] = "", species2[100] = "";
+	int run_mode = ONE_TO_ONE; // the default is one-to-one
+	struct ops_list *ops = NULL, *ops_cur_pos = NULL;
+	int *num_ops = NULL;
 	int num_dup_ops = 0;
-	struct n_pair *contigs1, *contigs2;
-	int *num_contigs1, *num_contigs2;
-	int *len_sum1, *len_sum2;
-	char *status;
+	struct n_pair *contigs1 = NULL, *contigs2 = NULL;
+	int *num_contigs1 = NULL, *num_contigs2 = NULL;
+	int *len_sum1 = NULL, *len_sum2 = NULL;
+	char *status = NULL;
 	bool is_written = false;
 
 //	int ctg_id1 = -1, ctg_id2 = -1;
@@ -271,9 +271,9 @@ int main(int argc, char **argv)
 		num_contigs1 = (int *) ckalloc(sizeof(int));
 		num_contigs2 = (int *) ckalloc(sizeof(int));
 
-		if( (*num_algns) > 0 ) {
-			contigs1 = (struct n_pair *) ckalloc(sizeof(struct n_pair) * 2 * (*num_algns));
-			contigs2 = (struct n_pair *) ckalloc(sizeof(struct n_pair) * 2 * (*num_algns));
+		if( count > 0 ) {
+			contigs1 = (struct n_pair *) ckalloc(sizeof(struct n_pair) * 2 * count);
+			contigs2 = (struct n_pair *) ckalloc(sizeof(struct n_pair) * 2 * count);
 
 			init_n_pair(contigs1, 0, (2*(*num_algns))-1);
 			init_n_pair(contigs2, 0, (2*(*num_algns))-1);
@@ -456,13 +456,16 @@ int main(int argc, char **argv)
 	}
 	
 	if( algn_type == PAIR ) {
-		if( (*num_algns) > 0 ) {
+		if( count > 0 ) {
 			free(contigs1);
 			free(contigs2);
 		}
 		free(num_contigs1);
 		free(num_contigs2);
+		free(len_sum1);
+		free(len_sum2);
 	}
+
 	free(num_ops);
 	free(size2);
 	free(size1);

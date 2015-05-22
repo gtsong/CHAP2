@@ -356,7 +356,7 @@ void init_array(int *array, int num)
 
 void overwrite_dots(int *num, struct DotList *dots)
 {
-  int i;
+  int i = 0;
 	int j = 0;
 
 	for(i = 0 ; i < *num; i++)
@@ -410,8 +410,10 @@ void overwrite_dots(int *num, struct DotList *dots)
 			dots[j].len2 = dots[i].len2;
 			dots[j].ctg_id1 = dots[i].ctg_id1;
 			dots[j].ctg_id2 = dots[i].ctg_id2;
-			strcpy(dots[j].name1, dots[i].name1);
-			strcpy(dots[j].name2, dots[i].name2);
+			if( j != i ) {
+				strcpy(dots[j].name1, dots[i].name1);
+				strcpy(dots[j].name2, dots[i].name2);
+			}
       j++;
     }
 		else 

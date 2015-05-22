@@ -900,23 +900,26 @@ void mark_match_algn(struct DotList cur, struct DotList *algns, int num_algns, i
 
 int assign_sign(int sign, int mode)
 {
-	int res;
+	int res = sign;
 
 	if( (sign == ORTHO) || (sign == ORTHO_COMP) ) res = sign;
 	else if( mode == CANDI_MODE ) 
   {
 	  if( sign == 0 ) res = TEMP_HIDDEN;
-    else if( sign == 1 ) res = TEMP_HIDDEN_COMP;
+		else res = TEMP_HIDDEN_COMP;
+//    else if( sign == 1 ) res = TEMP_HIDDEN_COMP;
   }
   else if( mode == ORTHO_MODE ) 
   {
     if( (sign == TEMP_HIDDEN) || (sign == 0) ) res = ORTHO;
-		else if( (sign == TEMP_HIDDEN_COMP) || (sign == 1) ) res = ORTHO_COMP;
+		else res = ORTHO_COMP;
+//		else if( (sign == TEMP_HIDDEN_COMP) || (sign == 1) ) res = ORTHO_COMP;
 	}
 	else if( mode == BACK_MODE )
 	{
     if( sign == TEMP_HIDDEN) res  = 0;
-		else if(sign == TEMP_HIDDEN_COMP) res = 1;
+		else res = 1;
+//		else if(sign == TEMP_HIDDEN_COMP) res = 1;
 	}
 	else res = sign;
 

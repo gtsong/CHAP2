@@ -17,30 +17,30 @@ int self_pair;
 
 int main(int argc, char **argv)
 {
-	struct DotList *pair_algns;
-	struct DotList *init_algns;
-	struct kdnode *tree; // k-d tree based on the left point of each alignment
-	struct perm_pt *p_pts; // permutation list sorted by k-d tree based on the left point
-	int *size1, *size2; 
-	int *num_algns;
-	int *num_init;
-	int *threshold;
-	int i;
+	struct DotList *pair_algns = NULL;
+	struct DotList *init_algns = NULL;
+	struct kdnode *tree = NULL; // k-d tree based on the left point of each alignment
+	struct perm_pt *p_pts = NULL; // permutation list sorted by k-d tree based on the left point
+	int *size1 = NULL, *size2 = NULL; 
+	int *num_algns = NULL;
+	int *num_init = NULL;
+	int *threshold = NULL;
+	int i = 0;
 	int count = 0;
-	FILE *fp, *f;
-	char *status;
-	char species[100], species2[100], name[100];
-	int b1, b2, e1, e2;
-  char len1[100], len2[100];
-  char strand[100];
-	struct r_list *rp1, *rp2;
-	char buf[500];
-	float rate;
-	int a, b;
-	char type[100];
+	FILE *fp = NULL, *f = NULL;
+	char *status = NULL;
+	char species[100] = "", species2[100] = "", name[100] = "";
+	int b1 = 0, b2 = 0, e1 = 1, e2 = 1;
+  char len1[100] = "", len2[100] = "";
+  char strand[100] = "";
+	struct r_list *rp1 = NULL, *rp2 = NULL;
+	char buf[500] = "";
+	float rate = (float) 0;
+	int a = 0, b = 0;
+	char type[100] = "";
 	int num_rp1 = 0, num_rp2 = 0;
 	int num_rp_count1 = 0, num_rp_count2 = 0;
-	struct g_list *genes1, *genes2;
+	struct g_list *genes1 = NULL, *genes2 = NULL;
 	int num_genes1 = 0, num_genes2 = 0;
 	
 	debug_mode = FALSE;
@@ -90,6 +90,11 @@ int main(int argc, char **argv)
 	size2 = (int *) ckalloc(sizeof(int));
 	threshold = (int *) ckalloc(sizeof(int));
 
+	*num_algns = 0;
+	*num_init = 0;
+	*size1 = 0;
+	*size2 = 0;
+	*threshold = 0;
 //	tree = (struct kdnode *) ckalloc(sizeof(struct kdnode));
 
 	if(strcmp(argv[3], argv[4]) == 0) {
@@ -222,7 +227,7 @@ int main(int argc, char **argv)
 
 		f = fopen(argv[1], "r");
 
-		if( (argc == 7) || (argc == 8) ) {
+		if( (argc == 9) || (argc == 10) ) {
 			if( (*num_algns) > 0 ) {
 				adjust_plot_pair_genes(pair_algns, num_algns, tree, p_pts, *size1, *size2, rp1, rp2, num_rp1, num_rp2, genes1, genes2, num_genes1, num_genes2, init_algns, f);
 			}
@@ -242,7 +247,7 @@ int main(int argc, char **argv)
 			fclose(f);
 		}
 
-		if( (argc == 7) || (argc == 8) ) {
+		if( (argc == 9) || (argc == 10) ) {
 			free(genes1);
 			free(genes2);
 		}

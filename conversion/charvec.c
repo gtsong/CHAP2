@@ -1,7 +1,7 @@
 #include "charvec.h"
 
-static const char rcsid[]=
-"$Id: charvec.c,v 1.1.1.1 2004/09/30 19:49:19 mhou Exp $";
+//static const char rcsid[]=
+//"$Id: charvec.c,v 1.1.1.1 2004/09/30 19:49:19 mhou Exp $";
 
 /* This implementation uses a "growable array" abstraction */
 

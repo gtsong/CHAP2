@@ -9,7 +9,7 @@
 #include "mz_scores.h"
 #include "multi_util.h"
 
-static const char rcsid[] = "$Id: multi_util.c,v 1.19 2006-02-03 21:03:04 mhou Exp $";
+//static const char rcsid[] = "$Id: multi_util.c,v 1.19 2006-02-03 21:03:04 mhou Exp $";
 
 int radius=30;
 int MIN_OUTPUT_WID=1;  

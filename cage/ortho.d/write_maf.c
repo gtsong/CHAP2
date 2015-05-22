@@ -86,16 +86,16 @@ void write_maf(char *fname, struct DotList *algns, int num_algns, struct r_list 
 
 void adjust_two_ch_algns(struct DotList *algns, int id1, int id2, int beg1, int beg2, FILE *fp, int *fst_end, int *sec_beg, bool is_x, struct r_list *rp1, struct r_list *rp2, int rp_id1, int rp_id2) // id1 is algns[id1].index
 {
-	char S1[BIG], S2[BIG], T1[BIG], T2[BIG];
-	struct b_list *a1_info, *a2_info;
-	int i, j, len;
-	int t_b, t_e;
-	float pid1, pid2;
-	int s1, s2, e1;
-	int t1, t2;
+	char S1[BIG] = "", S2[BIG] = "", T1[BIG] = "", T2[BIG] = "";
+	struct b_list *a1_info = NULL, *a2_info = NULL;
+	int i = 0, j = 0, len = 0;
+	int t_b = 0, t_e = 1;
+	float pid1 = 0, pid2 = 0;
+	int s1 = 0, s2 = 0, e1 = 1;
+	int t1 = 1, t2 = 1;
 	int cut_len1 = 0, cut_len2 = 0;
-	int end_pos, end_pos2;
-	int fid1, fid2;
+	int end_pos = 1, end_pos2 = 1;
+	int fid1 = 0, fid2 = 0;
 
 	fid1 = algns[id1].fid;
 	fid2 = algns[id2].fid;

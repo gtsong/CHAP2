@@ -14,7 +14,7 @@ int get_score(struct DotList *dots, struct gap_list gps, float *d_rate, struct r
 	int temp_score = -1;
 	int pid1 = 0, pid2 = 0;
 	int lid = 0, rid = 0;
-	struct gap_list temp_gps; 
+	struct gap_list temp_gps = {0, 0, 0, 0, 0, 0, 0, 0, 0, "", ""}; 
 
 	temp_gps = assign_glist(gps);
 	*id1 = -1;
@@ -138,11 +138,11 @@ void merge_two_alignments(struct DotList *dots, struct gap_list *gps, int num_ga
 int check_insertion(struct DotList *dots, struct gap_list gp, float *d_rate, struct r_list *rp_list, int num_list, int flag, int *id)
 {
 	int num_rp = -1;
-	struct r_list *rp, *temp_rp;
+	struct r_list *rp = NULL, *temp_rp = NULL;
 	int num_temp = 0;
 	int pid_rp = 100, pid_algns = -1;
 	int score = -1;
-	struct I x1, x2;
+	struct I x1 = {0, 1}, x2 = {0, 1};
 	float cr = -1;
 	int width_gap = -1;
 	int new_len = -1;
@@ -151,13 +151,19 @@ int check_insertion(struct DotList *dots, struct gap_list gp, float *d_rate, str
 	int cur_id = -1, start = -1, end = 0;
 	float cur_rate = 100;
 	int i = 0, j = 0;
-	char name[LEN_NAME];
+	char name[LEN_NAME] = "";
 	
 	*d_rate = 100; 
 
 	strcpy(name, "");
-	if( flag == Y_MODE ) strcpy(name, gp.name2);
-	if( flag == X_MODE ) strcpy(name, gp.name1);
+	if( flag == Y_MODE ) {
+		strcpy(name, gp.name2);
+	}
+	else strcpy(name, "NONE");
+	if( flag == X_MODE ) {
+		strcpy(name, gp.name1);
+	}
+	else strcpy(name, "NONE");
 
 	x1 = assign_I(0,1);
 	x2 = assign_I(0,1);

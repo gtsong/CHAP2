@@ -11,27 +11,27 @@ int debug_mode;
 
 int main(int argc, char **argv)
 {
-	struct DotList *self_algns;
-	struct DotList *pair_algns;
-	struct kdnode *tree;
-	struct perm_pt *p_pts;
-	struct kdnode *pair_tree;
-	struct perm_pt *pair_pts;
+	struct DotList *self_algns = NULL;
+	struct DotList *pair_algns = NULL;
+	struct kdnode *tree = NULL;
+	struct perm_pt *p_pts = NULL;
+	struct kdnode *pair_tree = NULL;
+	struct perm_pt *pair_pts = NULL;
 
-	int *num_algns;
-	int *num_pair;
-	int size_seq1, size_seq2;
-	int *size1, *size2;
-	int sp_flag; 
-	FILE *fp, *out;
+	int *num_algns = NULL;
+	int *num_pair = NULL;
+	int size_seq1 = 0, size_seq2 = 0;
+	int *size1 = NULL, *size2 = NULL;
+	int sp_flag = 0; 
+	FILE *fp = NULL, *out = NULL;
 	int count = 0, temp = 0;
 	int num_self_algns = 0, num_pair_algns = 0;
-	char *status;
-	char species[NAME_LEN], species2[NAME_LEN];
+	char *status = NULL;
+	char species[NAME_LEN] = "", species2[NAME_LEN] = "";
 
 	int b1 = 0, e1 = 1, b2 = 0, e2 = 1;
-	char len1[NAME_LEN], len2[NAME_LEN];
-	char strand[NAME_LEN];
+	char len1[NAME_LEN] = "", len2[NAME_LEN] = "";
+	char strand[NAME_LEN] = "";
 
 	debug_mode = FALSE;
 	if( argc == 7 ) {
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 	fclose(fp);
 	
 	num_self_algns = count;
-	if( count > 0 ) {
+	if( num_self_algns > 0 ) {
 		self_algns = (struct DotList *) ckalloc(count * sizeof(struct DotList));
 		read_maf(argv[1], D_MODE, self_algns, num_algns, size1, size2);	
 	}
@@ -130,7 +130,7 @@ int main(int argc, char **argv)
 	fclose(fp);
 
 	num_pair_algns = count;
-	if( count > 0 ) {
+	if( num_pair_algns > 0 ) {
 		pair_algns = (struct DotList *) ckalloc(count * sizeof(struct DotList));
 		read_maf(argv[2], G_MODE, pair_algns, num_pair, size1, size2);	
 	}

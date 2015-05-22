@@ -31,25 +31,25 @@ void chain_back(struct DotList *ortho_algns, int num_ortho);
 
 int main(int argc, char **argv)
 {
-	struct DotList *ortho_algns;
-	struct DotList *symm_ortho_algns;
-	struct DotList *algns, *symm_algns; // alignments from chaining
-	int *num_ortho, *num_symm_ortho, *num_algns, *num_symm;
-	int *size1, *size2;
+	struct DotList *ortho_algns = NULL;
+	struct DotList *symm_ortho_algns = NULL;
+	struct DotList *algns = NULL, *symm_algns = NULL; // alignments from chaining
+	int *num_ortho = NULL, *num_symm_ortho = NULL, *num_algns = NULL, *num_symm = NULL;
+	int *size1 = NULL, *size2 = NULL;
 	int count = 0;
 	int ortho_mode = ORTHO_CONTENT; 
-	char species[100], species2[100];
+	char species[100] = "", species2[100] = "";
 	int i = 0;
-	FILE *f, *g, *h, *fp;
+	FILE *f = NULL, *g = NULL, *h = NULL, *fp = NULL;
 	float avg_pid = (float)0; 
-	struct n_pair *contigs1, *contigs2;
-	int *num_contigs1, *num_contigs2;
-	int *len_sum1, *len_sum2;
-	int *num_alloc1, *num_alloc2; 
-	char *name1, *name2;
+	struct n_pair *contigs1 = NULL, *contigs2 = NULL;
+	int *num_contigs1 = NULL, *num_contigs2 = NULL;
+	int *len_sum1 = NULL, *len_sum2 = NULL;
+	int *num_alloc1 = NULL, *num_alloc2 = NULL; 
+	char *name1 = NULL, *name2 = NULL;
 	int len1 = 0, len2 = 0;
 	int num_org1 = 0, num_org2 = 0;
-	char buf[1000];
+	char buf[1000] = "";
 
 	debug_mode = FALSE;
 	ortho_mode = ORTHO_CONTENT;
@@ -105,8 +105,8 @@ int main(int argc, char **argv)
 			*num_contigs1 = count;
 			num_org1 = count;
 			*num_alloc1 = count+1;
-			fclose(fp);
 		}
+		fclose(fp);
 
 		if( (fp = ckopen(argv[8], "r")) == NULL ) {
 			fatalf("file %s not exist\n", argv[8]);
@@ -137,8 +137,8 @@ int main(int argc, char **argv)
 			*num_contigs2 = count;
 			*num_alloc2 = count+1;
 			num_org2 = count;
-			fclose(fp);
 		}
+		fclose(fp);
 	}
 	else {
 		count = ALLOC_UNIT;
@@ -289,7 +289,8 @@ int main(int argc, char **argv)
 	if( (*num_ortho) > 0 ) {
 		avg_pid = cal_avg_pid(ortho_algns, *num_ortho);
 	}
-	else if( (*num_symm_ortho) > 0 ) {
+//	else if( (*num_symm_ortho) > 0 ) {
+	else {
 		avg_pid = cal_avg_pid(symm_ortho_algns, *num_symm_ortho);
 	}
 
@@ -297,7 +298,7 @@ int main(int argc, char **argv)
 		f = ckopen(argv[1], "r");
 		g = ckopen(argv[2], "r");
 	}
-	else if( (ortho_mode == ORTHO_CONTENT) || (ortho_mode == ORTHO_POSITION) ) {
+	else { // ortho_mode == ORTHO_CONTENT) || (ortho_mode == ORTHO_POSITION)
 		f = ckopen(argv[3], "r");
 		g = ckopen(argv[4], "r");
 	}

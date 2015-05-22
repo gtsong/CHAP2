@@ -235,11 +235,11 @@ int find_self_alg(struct DotList *dots, int num_lines, struct slist *sorted, int
 
 void throw_away_rps(struct DotList *dots, int num_lines, struct IntList self_alg, struct kdnode *tree, struct perm_pt *p_pts, int size, int flag) 
 {
-	int start, end;
-	int x1, x2, y1, y2;
-	int i, j = 0;
-	int *longest;
-	struct perm_pt *temp_plist;
+	int start = 0, end = 1;
+	int x1 = 0, x2 = 0, y1 = 1, y2 = 1;
+	int i = 0, j = 0;
+	int *longest = NULL;
+	struct perm_pt *temp_plist = NULL;
 
 	longest = (int *) ckalloc(sizeof(int));
 	temp_plist = (struct perm_pt *) ckalloc(num_lines * sizeof(struct perm_pt));
@@ -251,7 +251,8 @@ void throw_away_rps(struct DotList *dots, int num_lines, struct IntList self_alg
 		x2 = self_alg.reg.upper + (3*RANGE_TH);
 		y2 = size;
 	}
-	else if( flag == Y_SIDE )
+//	else if( flag == Y_SIDE )
+	else // flag == Y_SIDE )
 	{
 		x1 = 1;
 		y1 = self_alg.reg.lower - (3*RANGE_TH);
@@ -302,11 +303,11 @@ void throw_away_rps(struct DotList *dots, int num_lines, struct IntList self_alg
 
 void throw_away_rps_pair(struct DotList *dots, int num_lines, struct IntList self_alg, struct kdnode *tree, struct perm_pt *p_pts, int size_seq1, int size_seq2, int sp_flag) 
 {
-	int start, end;
-	int x1, x2, y1, y2;
-	int i, j = 0;
-	int *longest;
-	struct perm_pt *temp_plist;
+	int start = 0, end = 1;
+	int x1 = 0, x2 = 0, y1 = 1, y2 = 1;
+	int i = 0, j = 0;
+	int *longest = NULL;
+	struct perm_pt *temp_plist = NULL;
 
 	longest = (int *) ckalloc(sizeof(int));
 	temp_plist = (struct perm_pt *) ckalloc(num_lines * sizeof(struct perm_pt));
@@ -318,7 +319,8 @@ void throw_away_rps_pair(struct DotList *dots, int num_lines, struct IntList sel
 		x2 = self_alg.reg.upper + (3*RANGE_TH);
 		y2 = size_seq2;
 	}
-	else if( sp_flag == SP_2 )
+	else // sp_flag == SP_2 
+//	else if( sp_flag == SP_2 )
 	{
 		x1 = 1;
 		y1 = self_alg.reg.lower - (2*RANGE_TH);

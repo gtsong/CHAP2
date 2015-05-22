@@ -8,8 +8,7 @@
 #include "multi_util.h"
 #include "mz_scores.h"
 
-static const char rcsid[] = "$Id: maf.c,v 1.8 2006-02-03 21:01:28 mhou Exp $";
-
+//static const char rcsid[] = "$Id: maf.c,v 1.8 2006-02-03 21:01:28 mhou Exp $";
 
 struct mafFile *mafOpen(char *fileName, int verbose) {
 	struct mafFile *mf;

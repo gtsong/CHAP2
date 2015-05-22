@@ -348,13 +348,13 @@ void update_init_algn(struct I reg, struct DotList *dots, int id, bool is_x, int
 
 void adjust_init_algn(struct DotList *init_dots, int id, struct I dup_reg, bool is_x, FILE *fp, int mode, bool dup_is_x) 
 {
-	int cur, old;
-	int loc;
-	int old_diff, new_diff;
-	struct I cur_reg;
-	int b, e;
-	int threshold;
-	int cut_point;
+	int cur = 0, old = 0;
+	int loc = 0;
+	int old_diff = 0, new_diff = 0;
+	struct I cur_reg = {0, 1};
+	int b = 0, e = 1;
+	int threshold = 0;
+	int cut_point = 0;
 	
 	if( is_x == true ) {
 		b = init_dots[id].x.lower + init_dots[id].xl_diff; 
@@ -414,6 +414,7 @@ void adjust_init_algn(struct DotList *init_dots, int id, struct I dup_reg, bool 
 				old_diff = init_dots[id].xl_diff;
 				if( mode == DUP) new_diff = dup_reg.upper - init_dots[id].x.lower;
 				else if( mode == DEL ) new_diff = cut_point - init_dots[id].x.lower;
+				else new_diff = 0;
 
 				if( new_diff > old_diff ) { 
 					init_dots[id].xl_diff = new_diff;

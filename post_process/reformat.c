@@ -11,28 +11,28 @@ int find_status(struct cv_list cur_cv, struct cv_list *cv, int num_cv, char *nam
 
 int main(int argc, char **argv)
 {
-	FILE *cv_f;
-	int *bid;
- 	struct cv_list *cv; // the conversion events detected by Chih-Hao's program
-	int num_cv;
- 	struct cv_list *init_cv; // the conversion events detected by Chih-Hao's program
-	int num_init_cv;
-	char buf[2000];
+	FILE *cv_f = NULL;
+	int *bid = NULL;
+ 	struct cv_list *cv = NULL; // the conversion events detected by Chih-Hao's program
+	int num_cv = 0;
+ 	struct cv_list *init_cv = NULL; // the conversion events detected by Chih-Hao's program
+	int num_init_cv = 0;
+	char buf[2000] = "";
 	int i = 0, j = 0;
-	char species1[100], species2[100];
+	char species1[100] = "", species2[100] = "";
 	int res = 0;
-	DIR *dir;
-	struct dirent *dent;
+	DIR *dir = NULL;
+	struct dirent *dent = NULL;
 	int num_sp = 0;
-	struct n_pair **contigs;
-	struct sp_list *species;
-	FILE *fp;
-	char name1[100], name2[100];
-	char name3[100], name4[100];
-	char name5[100], name6[100];
-	char temp_name[100];
+	struct n_pair **contigs = NULL;
+	struct sp_list *species = NULL;
+	FILE *fp = NULL;
+	char name1[100] = "", name2[100] = "";
+	char name3[100] = "", name4[100] = "";
+	char name5[100] = "", name6[100] = "";
+	char temp_name[100] = "";
 	int len = 0, len_sum = 0;
-	char file_name[100];
+	char file_name[100] = "";
 
 	debug_mode = FALSE;
 	if( argc == 5 ) debug_mode = TRUE;
@@ -70,12 +70,11 @@ int main(int argc, char **argv)
 				}
 				strcpy(species[j].name, name1);
 				j++;
+				fclose(fp);
 			}
 		}
-	}	
-
-	fclose(fp);
-	closedir(dir);
+		closedir(dir);
+	}
 
 	bid = (int *) ckalloc(sizeof(int));
 	cv_f = fopen(argv[1], "r");

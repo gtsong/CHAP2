@@ -230,9 +230,9 @@ void adjust_multi_contig_pos(struct DotList *algns, int num_algns, int *size1, i
 {
 	int i = 0, id = -1;
 	int num1 = 0, num2 = 0;
-	char sp_name1[LEN_NAME], ctg_name1[LEN_NAME];
-	char sp_name2[LEN_NAME], ctg_name2[LEN_NAME];
-	char name1[LEN_NAME], name2[LEN_NAME];
+	char sp_name1[LEN_NAME] = "", ctg_name1[LEN_NAME] = "";
+	char sp_name2[LEN_NAME] = "", ctg_name2[LEN_NAME] = "";
+	char name1[LEN_NAME] = "", name2[LEN_NAME] = "";
 
 	strcpy(sp_name1, "");
 	strcpy(sp_name2, "");

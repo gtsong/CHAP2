@@ -7,6 +7,7 @@
 #include "util.h"
 #include "contigs_op.h"
 
+#define BIG 1000000
 #define MAX_GAP 5000
 #define MIN_COVERAGE 0.5
 #define MIN_MATCH 0.8	
@@ -26,7 +27,7 @@ typedef struct Net_level {
 typedef struct Aln {
 	int start1, len1, src_len1, start2, len2, src_len2;
 	int ctg_id1, ctg_id2;
-	char text1[1000000], text2[1000000];
+	char text1[BIG], text2[BIG];
 	struct Aln *next;
 } aln_t;
 
@@ -41,16 +42,16 @@ typedef struct Chain {
 
 net_level_t net_level[1000];
 int net_level_num;
-net_t net[2][1000000];
-int rescored[1][1000000];
+net_t net[2][BIG];
+int rescored[1][BIG];
 int net_num[2];
-char buf[1000000];
-char seqs[2][3][1000000];
-int seq2_pos[2][1000000];
+char buf[BIG];
+char seqs[2][3][BIG];
+int seq2_pos[2][BIG];
+int IS[3][BIG], IS_num[3], IS_sites[4][BIG], IS_ref[BIG];
+int IS_quadruplet[BIG], IS_quadruplet_num, IS_quadruplet_sites[2][BIG];
 int d_beg_index[10000], d_end_index[10000], d_index_num;
 int sites_num[2];
-int IS[3][1000000], IS_num[3], IS_sites[4][1000000], IS_ref[1000000];
-int IS_quadruplet[1000000], IS_quadruplet_num, IS_quadruplet_sites[2][1000000];
 int m[2], n[2], max_descent[3], beg_index = 0, end_index = 0;
 double identity;
 int max_len, min_len, max_beg1, min_beg1, min_end1, max_end1, max_beg2, min_beg2, min_end2, max_end2, start[2], end[2];
@@ -700,7 +701,7 @@ char Complement(char c) {
 	}
 }
 
-int check_orthologs(int start, int end) {
+bool check_orthologs(int start, int end) {
 	int start_net = -1, end_net = -1, i, total_net_len, orthologs_start, orthologs_end;
 
 	mismatch_net_num = 0;
@@ -716,7 +717,7 @@ int check_orthologs(int start, int end) {
 	}
 	
 	if(start_net == -1)
-		return 0;
+		return false;
 
 	//check coverage of all nets
 	if(net[0][start_net].start > start)
@@ -736,26 +737,26 @@ int check_orthologs(int start, int end) {
 			total_net_len += net[0][i].end - net[0][i].start + 1;
 		total_net_len += orthologs_end - net[0][end_net].start + 1;
 	}
-	if((float)total_net_len / (float)(end - start + 1) < MIN_COVERAGE) {
-		return 0;
+	if(((float)total_net_len / (float)(end - start + 1)) < MIN_COVERAGE) {
+		return false;
 	}
 	else if(start_net == end_net) {
-		return 1;
+		return true;
 	}
 
-	return 1;	
+	return true;	
 }
 
 //int process_chain(chain_t c, int ref, int num_contigs, int *len_sum) {
 int process_chain(chain_t c, int ref) {
 	int i, j, k, l, old_aln_end1, old_aln_end2;
-	char aln_text_temp[1000000], *aln_text_ptr1, *aln_text_ptr2;
+	char aln_text_temp[BIG], *aln_text_ptr1, *aln_text_ptr2;
 	aln_t *aln;
 //	int temp_id = -1;
 //	int len_diff = 0;
 	
 	//check orthologs
-	if((ref == 1 && !check_orthologs(c.start1, c.end1)) || (ref == 2 && !check_orthologs(c.start2, c.end2)))
+	if(((ref == 1) && (check_orthologs(c.start1, c.end1) == false)) || ((ref == 2) && (check_orthologs(c.start2, c.end2) == false)))
 		return 0;
 	
 	if(ref == 1)
@@ -1191,40 +1192,40 @@ int check_orthologs_overlap(chain_t c) {
 }
 
 int read_chain(char *chain_fn, struct n_pair **contigs1, int *num_contigs1, int *num_blocks1, int **len_sum1) {
-	FILE *fp;
-	char *not_eof;
+	FILE *fp = NULL;
+	char *not_eof = NULL;
 	chain_t c;
-	int index;
-	aln_t **aln_ptr, *aln;
-	int i, match, mismatch, triplet_status, aln_len;
-	float d_conf;
-	char name1[LEN_NAME], name2[LEN_NAME];
+	int index = 0;
+	aln_t **aln_ptr = NULL, *aln = NULL;
+	int i = 0, match = 0, mismatch = 0, triplet_status = 0, aln_len = 0;
+	float d_conf = (float)0;
+	char name1[LEN_NAME] = "", name2[LEN_NAME] = "";
 	int num1 = 0;
 	int count = 0;
 	int temp_id1 = 0, temp_id2 = 0;
 
 	num1 = *num_contigs1;
 	fp = fopen(chain_fn, "r");
-	while((not_eof = fgets(buf, 1000000, fp)) && buf[0] == '#')
+	while((not_eof = fgets(buf, BIG, fp)) && buf[0] == '#')
 		;
 	while(not_eof) {
 		sscanf(buf, "%d %s %d %d %s %d %d %c", &index, name1, &c.start1, &c.end1, name2, &c.start2, &c.end2, &c.orient);
 
 		concat_ctg_name(name2, c.chr2, c.contig2);
 		// test length
-		if((c.end1 - c.start1 + 1) > 1000000 || (c.end2 - c.start2 + 1) > 1000000) {
+		if((c.end1 - c.start1 + 1) > BIG || (c.end2 - c.start2 + 1) > BIG) {
 			printf("chain is too long : %d - %d\n", c.end1 - c.start1 + 1, c.end2 - c.start2 + 1);
 			exit(1);
 		}
-		fgets(buf, 1000000, fp);
+		not_eof = fgets(buf, BIG, fp);
 		aln_ptr = &c.aln;
 		count = 0;
-		while(buf[0] == 'a') {
+		while((not_eof) && (buf[0] == 'a')) {
 			*aln_ptr = (aln_t *)ckalloc(sizeof(aln_t));
-			fgets(buf, 1000000, fp);
+			not_eof = fgets(buf, BIG, fp);
 			sscanf(buf, "s %s %d %d %c %d %s", name1, &(*aln_ptr)->start1, &(*aln_ptr)->len1, &c.orient, &(*aln_ptr)->src_len1, (*aln_ptr)->text1);
 			
-			fgets(buf, 1000000, fp);
+			not_eof = fgets(buf, BIG, fp);
 			sscanf(buf, "s %s %d %d %c %d %s", name2, &(*aln_ptr)->start2, &(*aln_ptr)->len2, &c.orient, &(*aln_ptr)->src_len2, (*aln_ptr)->text2);
 
 			if( count == 0 ) {
@@ -1233,8 +1234,15 @@ int read_chain(char *chain_fn, struct n_pair **contigs1, int *num_contigs1, int 
 				c.ctg_id1 = temp_id1;
 				if( temp_id1 == num1 ) {
 					num1++;
-					*len_sum1 = (int *) ckrealloc(*len_sum1, num1 * sizeof(int));
-					(*len_sum1)[num1-1] = (*len_sum1)[num1-2] + (*contigs1)[num1-2].len;
+
+					if( num1 == 1 ) {
+						*len_sum1 = (int *) ckalloc(sizeof(int));
+						(*len_sum1)[0] = 0;
+					}
+					else {
+						*len_sum1 = (int *) ckrealloc(*len_sum1, num1 * sizeof(int));
+						(*len_sum1)[num1-1] = (*len_sum1)[num1-2] + (*contigs1)[num1-2].len;
+					}
 				}
 				else if( temp_id1 > num1 ) {
 					fatalf("warning: %d should not excceed %d\n", temp_id1, num1);
@@ -1253,8 +1261,15 @@ int read_chain(char *chain_fn, struct n_pair **contigs1, int *num_contigs1, int 
 				c.ctg_id2 = temp_id2;
 				if( temp_id2 == num1 ) {
 					num1++;
-					*len_sum1 = (int *) ckrealloc(*len_sum1, num1 * sizeof(int));
-					(*len_sum1)[num1-1] = (*len_sum1)[num1-2] + (*contigs1)[num1-2].len;
+
+					if( num1 == 1 ) {
+						*len_sum1 = (int *) ckalloc(sizeof(int));
+						(*len_sum1)[0] = 0;
+					}
+					else { 
+						*len_sum1 = (int *) ckrealloc(*len_sum1, num1 * sizeof(int));
+						(*len_sum1)[num1-1] = (*len_sum1)[num1-2] + (*contigs1)[num1-2].len;
+					}
 				}
 				else if( temp_id2 > num1 ) {
 					fatalf("warning: %d should not excceed %d\n", temp_id1, num1);
@@ -1277,8 +1292,8 @@ int read_chain(char *chain_fn, struct n_pair **contigs1, int *num_contigs1, int 
 
 			(*aln_ptr)->next = NULL;
 			aln_ptr = &((*aln_ptr)->next);
-			fgets(buf, 1000000, fp);
-			not_eof = fgets(buf, 1000000, fp);
+			not_eof = fgets(buf, BIG, fp);
+			not_eof = fgets(buf, BIG, fp);
 		}
 		
 		start[0] = c.start1;
@@ -1478,10 +1493,16 @@ void init_contigs_list(FILE *ctg_f, struct n_pair **contigs, int *num_contigs, i
 		i = 0;
 		while( fgets(buf, 1000, ctg_f) ) {
 			sscanf(buf, "%s %s %d %d", name1, name2, &len1, &len2);
-			strcpy( (*contigs)[i].name1, name1);
-			strcpy( (*contigs)[i].name2, name2);
-			(*contigs)[i].len = len1;
-			(*len_sum)[i] = len2;
+
+			if( i < (*num_contigs) ) {
+				strcpy( (*contigs)[i].name1, name1);
+				strcpy( (*contigs)[i].name2, name2);
+				(*contigs)[i].len = len1;
+				(*len_sum)[i] = len2;
+			}
+			else {
+				fatalf("counting error: (md_quadruplet_entire_region.c) %d\n", i);
+			}
 			i++;
 		}
 	}
@@ -1504,8 +1525,8 @@ void print_contig_list(FILE *ctg_f, struct n_pair *contigs, int *len_sum, int nu
 
 int main(int argc, char *argv[]) {
 	struct n_pair *contigs1, *contigs2;
-	int num_contigs1 = 0, num_contigs2 = 0;
-	int num_blocks1 = 1, num_blocks2 = 1;
+	int *num_contigs1 = NULL, *num_contigs2 = NULL;
+	int *num_blocks1 = NULL, *num_blocks2 = NULL;
 	int *len_sum1, *len_sum2;
 	FILE *ctg_f1, *ctg_f2;
 	int num_org_contigs1 = 0, num_org_contigs2 = 0;
@@ -1515,13 +1536,22 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+	num_contigs1 = (int *) ckalloc(sizeof(int));
+	num_contigs2 = (int *) ckalloc(sizeof(int));
+	num_blocks1 = (int *) ckalloc(sizeof(int));
+	num_blocks2 = (int *) ckalloc(sizeof(int));
+	*num_contigs1 = 0;
+	*num_contigs2 = 0;
+	*num_blocks1 = 1;
+	*num_blocks2 = 1;
+
 	ctg_f1 = ckopen(argv[4], "a+");
 	ctg_f2 = ckopen(argv[5], "a+");
 	
-	init_contigs_list(ctg_f1, &contigs1, &num_contigs1, &num_blocks1, &len_sum1);
-	num_org_contigs1 = num_contigs1;
-	init_contigs_list(ctg_f2, &contigs2, &num_contigs2, &num_blocks2, &len_sum2);
-	num_org_contigs2 = num_contigs2;
+	init_contigs_list(ctg_f1, &contigs1, num_contigs1, num_blocks1, &len_sum1);
+	num_org_contigs1 = *num_contigs1;
+	init_contigs_list(ctg_f2, &contigs2, num_contigs2, num_blocks2, &len_sum2);
+	num_org_contigs2 = *num_contigs2;
 
 /*
 	// read input file
@@ -1536,20 +1566,24 @@ int main(int argc, char *argv[]) {
 		max_gc_ratio = atof(argv[6]);
 	}
 
-	read_orthologs(argv[2], 0, &contigs1, &num_contigs1, &num_blocks1, &len_sum1, &contigs2, &num_contigs2, &num_blocks2, &len_sum2);
-	read_orthologs(argv[3], 1, &contigs1, &num_contigs1, &num_blocks1, &len_sum1, &contigs2, &num_contigs2, &num_blocks2, &len_sum2);
-	read_chain(argv[1], &contigs1, &num_contigs1, &num_blocks1, &len_sum1);
+	read_orthologs(argv[2], 0, &contigs1, num_contigs1, num_blocks1, &len_sum1, &contigs2, num_contigs2, num_blocks2, &len_sum2);
+	read_orthologs(argv[3], 1, &contigs1, num_contigs1, num_blocks1, &len_sum1, &contigs2, num_contigs2, num_blocks2, &len_sum2);
+	read_chain(argv[1], &contigs1, num_contigs1, num_blocks1, &len_sum1);
 	//printf("d_0 = %d, d_1 = %d, d_2 = %d, d_3 = %d\n", d_0, d_1, d_2, d_3);
 
-	print_contig_list(ctg_f1, contigs1, len_sum1, num_org_contigs1, num_contigs1);
-	print_contig_list(ctg_f2, contigs2, len_sum2, num_org_contigs2, num_contigs2);
+	print_contig_list(ctg_f1, contigs1, len_sum1, num_org_contigs1, *num_contigs1);
+	print_contig_list(ctg_f2, contigs2, len_sum2, num_org_contigs2, *num_contigs2);
 	
 	fclose(ctg_f1);
 	fclose(ctg_f2);
 
 	free(contigs1);
 	free(contigs2);
-	if( num_contigs1 > 0 ) free(len_sum1);
-	if( num_contigs2 > 0 ) free(len_sum2);
+	if( (*num_contigs1) > 0 ) free(len_sum1);
+	if( (*num_contigs2) > 0 ) free(len_sum2);
+	free(num_contigs1);
+	free(num_contigs2);
+	free(num_blocks1);
+	free(num_blocks2);
 	return 0;
 }

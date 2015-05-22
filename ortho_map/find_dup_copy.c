@@ -477,10 +477,10 @@ int find_opt_du_copy(struct DotList *dots, int num_lines, int id, struct perm_pt
 
 int find_id(struct DotList *dots, struct kdnode *tree, int size, int id, int xval, int yval, int option)
 {
-	int res_id;
-	int x, y;
-	int len;
-	int sign;
+	int res_id = 0;
+	int x = 1, y = size;
+	int len = 0;
+	int sign = -1;
 
 	if( id == -1 ) { // to redo 'del' events beforing ancestral steps
 		len = RANGE_TH;
@@ -575,7 +575,8 @@ int find_id(struct DotList *dots, struct kdnode *tree, int size, int id, int xva
 		if( y <= 0 ) y = 1;
 		res_id = find_pred_blk(tree, x, y);
 	}
-	else if( option == OH_FID )
+	else // option == OH_FID
+//	else if( option == OH_FID )
 	{
 		x = xval + (2 * RANGE_TH);
 		y = yval + (2 * RANGE_TH);
@@ -933,8 +934,8 @@ bool tandem_exist(struct DotList *dots, struct perm_pt *p_pts, struct kdnode *tr
 
 int find_id_len(struct kdnode *tree, int size, int len, int xval, int yval, int option)
 {
-	int res_id;
-	int x, y;
+	int res_id = 0;
+	int x = 1, y = size;
 
 	if( option == W_SID )
 	{
@@ -952,7 +953,7 @@ int find_id_len(struct kdnode *tree, int size, int len, int xval, int yval, int 
 		if( y <= 0 ) y = 1;
 		res_id = find_pred_blk(tree, x, y);
 	}
-	else if( option == W_FID )
+	else // option == W_FID
 	{
 		if( len > RANGE_TH )
 		{

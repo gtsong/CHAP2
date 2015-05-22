@@ -167,21 +167,21 @@ do
 			$BIN/cage_mask $CAGE_SELF/$sp2.maf $TEMP/ab_new.maf $TEMP/b.maf $TEMP/new.maf 2
 			if [ -f $USER_ANNOT/$sp1.codex ]
 			then
-				$BIN/cage_chain $TEMP/a.maf $TEMP/new_a.maf $RM_OUT/$sp1.out $RM_OUT/$sp1.out $USER_ANNOT/$sp1.codex $USER_ANNOT/$sp1.codex
+				$BIN/cage_chain $TEMP/a.maf $TEMP/new_a.maf $RM_OUT/$sp1.out $RM_OUT/$sp1.out $USER_ANNOT/$sp1.codex $USER_ANNOT/$sp1.codex $sp1 $sp1
 			else
-				$BIN/cage_chain $TEMP/a.maf $TEMP/new_a.maf $RM_OUT/$sp1.out $RM_OUT/$sp1.out
+				$BIN/cage_chain $TEMP/a.maf $TEMP/new_a.maf $RM_OUT/$sp1.out $RM_OUT/$sp1.out $sp1 $sp1
 			fi
 			if [ -f $USER_ANNOT/$sp2.codex ]
 			then
-				$BIN/cage_chain $TEMP/b.maf $TEMP/new_b.maf $RM_OUT/$sp2.out $RM_OUT/$sp2.out $USER_ANNOT/$sp2.codex $USER_ANNOT/$sp2.codex
+				$BIN/cage_chain $TEMP/b.maf $TEMP/new_b.maf $RM_OUT/$sp2.out $RM_OUT/$sp2.out $USER_ANNOT/$sp2.codex $USER_ANNOT/$sp2.codex $sp2 $sp2
 			else
-				$BIN/cage_chain $TEMP/b.maf $TEMP/new_b.maf $RM_OUT/$sp2.out $RM_OUT/$sp2.out
+				$BIN/cage_chain $TEMP/b.maf $TEMP/new_b.maf $RM_OUT/$sp2.out $RM_OUT/$sp2.out $sp2 $sp2
 			fi
 			if [ -f $USER_ANNOT/$sp1.codex ] && [ -f $USER_ANNOT/$sp2.codex ]
 			then
-				$BIN/cage_chain $TEMP/new.maf $TEMP/new_ab.maf $RM_OUT/$sp1.out $RM_OUT/$sp2.out $USER_ANNOT/$sp1.codex $USER_ANNOT/$sp2.codex
+				$BIN/cage_chain $TEMP/new.maf $TEMP/new_ab.maf $RM_OUT/$sp1.out $RM_OUT/$sp2.out $USER_ANNOT/$sp1.codex $USER_ANNOT/$sp2.codex $sp1 $sp2
 			else
-				$BIN/cage_chain $TEMP/new.maf $TEMP/new_ab.maf $RM_OUT/$sp1.out $RM_OUT/$sp2.out
+				$BIN/cage_chain $TEMP/new.maf $TEMP/new_ab.maf $RM_OUT/$sp1.out $RM_OUT/$sp2.out $sp1 $sp2
 			fi
 			#cp $TEMP/new_a.maf ortho.d/ch_self.d/$sp1.maf
 			#cp $TEMP/new_b.maf ortho.d/ch_self.d/$sp2.maf
@@ -191,8 +191,8 @@ do
 			cat $TEMP/new_ab.maf >> $CAGE_DATA/$sp1.$sp2.maf
 			echo "preliminary orthologous mappings between $sp1 and $sp2"
 			#$BIN/cage_ortho $CAGE_DATA/$sp1.$sp2.maf $OPTION1 > ortho.d/$OPTION1-ortho.d/$sp1.$sp2.maf
-			$BIN/cage_ortho $CAGE_DATA/$sp1.$sp2.maf $OPTION2 > $CAGE_OTM/$sp1.$sp2.maf
-			$BIN/cage_ortho $CAGE_DATA/$sp1.$sp2.maf $OPTION3 > $CAGE_MTM/$sp1.$sp2.maf
+			$BIN/cage_ortho $CAGE_DATA/$sp1.$sp2.maf $OPTION2 $sp1 $sp2 > $CAGE_OTM/$sp1.$sp2.maf
+			$BIN/cage_ortho $CAGE_DATA/$sp1.$sp2.maf $OPTION3 $sp1 $sp2 > $CAGE_MTM/$sp1.$sp2.maf
 		fi
 	done
 done

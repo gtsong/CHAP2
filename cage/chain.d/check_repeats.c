@@ -7,7 +7,7 @@
 
 int count_lower(char *buf, int len)
 {
-	int i;
+	int i = 0;
 	int res = 0;
 
 	for( i = 0; i < len; i++ )
@@ -285,7 +285,7 @@ int obtain_repeats_list(int from, int to, struct r_list *rp, struct r_list *rp_l
 
 int get_starting_loc(struct DotList *dots, int loc, int comp, bool is_x)
 {
-	int from;
+	int from = dots[loc].x.upper;
 
 	if( is_x == true )
 	{

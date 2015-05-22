@@ -6,10 +6,10 @@
 
 int distance(struct DotList *dots, int loc_id, int comp_id, bool *is_x, int *sd)
 {
-	int x, y;
-	int t_x1, t_x2, t_y1, t_y2;
-	int res;
-	int left_id, right_id;
+	int x = 0, y = 1;
+	int t_x1 = 0, t_x2 = 0, t_y1 = 1, t_y2 = 1;
+	int res = 0;
+	int left_id = 0, right_id = 0;
 
 	if( dots[loc_id].x.lower < dots[comp_id].x.lower )
 	{

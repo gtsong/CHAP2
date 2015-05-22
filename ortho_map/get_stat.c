@@ -12,20 +12,20 @@ char S1[BIG], T1[BIG];
 
 int main(int argc, char **argv)
 {
-	struct DotList *content_ortho;
-	struct DotList *position_ortho;
-	int *num_content, *num_position;
-	int *size1, *size2;
+	struct DotList *content_ortho = NULL;
+	struct DotList *position_ortho = NULL;
+	int *num_content = NULL, *num_position = NULL;
+	int *size1 = NULL, *size2 = NULL;
 	int count = 0;
-	char species[100], species2[100];
-	FILE *f, *g;
-	struct exons_list *exons, *genes; 
-	int *num_exons, *num_genes;
+	char species[100] = "", species2[100] = "";
+	FILE *f = NULL, *g = NULL;
+	struct exons_list *exons = NULL, *genes = NULL; 
+	int *num_exons = NULL, *num_genes = NULL;
 	float content_avg_pid = (float)0; 
 	float position_avg_pid = (float)0; 
-	struct n_pair *contigs1, *contigs2;
+	struct n_pair *contigs1 = NULL, *contigs2 = NULL;
 	int num_contigs1 = 0, num_contigs2 = 0;
-	int *len_sum1, *len_sum2;
+	int *len_sum1 = NULL, *len_sum2 = NULL;
 	int i = 0;
 
 	debug_mode = FALSE;
@@ -78,6 +78,16 @@ int main(int argc, char **argv)
     read_contigs_file(species, f, contigs1, num_contigs1);
     cal_length_sum(len_sum1, contigs1, num_contigs1);
   }
+	else {
+		num_contigs1 = 1;
+    contigs1 = (struct n_pair *) ckalloc(sizeof(struct n_pair));
+    len_sum1 = (int *) ckalloc(sizeof(int));
+		strcpy(contigs1[0].name1, species);
+		strcpy(contigs1[0].name2, species);
+		contigs1[0].id = 0;
+		contigs1[0].len = *size1;
+		len_sum1[0] = 0;
+	}
 
   if( num_contigs2 > 0 ) {
     contigs2 = (struct n_pair *) ckalloc(num_contigs2 * sizeof(struct n_pair));
@@ -85,6 +95,17 @@ int main(int argc, char **argv)
     read_contigs_file(species2, f, contigs2, num_contigs2);
     cal_length_sum(len_sum2, contigs2, num_contigs2);
   }
+	else {
+		num_contigs2 = 1;
+    contigs2 = (struct n_pair *) ckalloc(sizeof(struct n_pair));
+    len_sum2 = (int *) ckalloc(sizeof(int));
+		strcpy(contigs2[0].name1, species);
+		strcpy(contigs2[0].name2, species);
+		contigs2[0].id = 0;
+		contigs2[0].len = *size2;
+		len_sum2[0] = 0;
+	}
+
   fclose(f);
 	
 	if( (*num_content) > 0 ) {
@@ -149,6 +170,10 @@ int main(int argc, char **argv)
 		free(position_ortho);
 	}
 
+	free(contigs1);
+	free(contigs2);
+	free(len_sum1);
+	free(len_sum2);
 	free(num_content);
 	free(num_position);
 	free(exons);
