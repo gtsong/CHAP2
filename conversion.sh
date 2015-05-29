@@ -83,15 +83,21 @@ then
 
 		echo ">"$sp > "$TEMP/$sp"_1
 		$BIN/remove_headers $USER_SEQ/$sp >> "$TEMP/$sp"_1
-		echo ">"$sp > "$TEMP/$sp"_2
-		$BIN/remove_headers $TEMP/$sp >> "$TEMP/$sp"_2
 
-		comp=`$BIN/check_mask "$TEMP/$sp"_1 "$TEMP/$sp"_2 | awk '{print $1}'` 
-		if [ "$comp" == "first" ] 
+		if [ -f $TEMP/sp ]
 		then
+			echo ">"$sp > "$TEMP/$sp"_2
+			$BIN/remove_headers $TEMP/$sp >> "$TEMP/$sp"_2
+
+			comp=`$BIN/check_mask "$TEMP/$sp"_1 "$TEMP/$sp"_2 | awk '{print $1}'` 
+			if [ "$comp" == "first" ] 
+			then
+				cat $USER_SEQ/$sp > $MASK_SEQ/$sp
+			else 
+				cat $TEMP/$sp.masked > $MASK_SEQ/$sp
+			fi
+		else
 			cat $USER_SEQ/$sp > $MASK_SEQ/$sp
-		else 
-			cat $TEMP/$sp.masked > $MASK_SEQ/$sp
 		fi
 		
 		rm -rf "$TEMP/$sp"_1 "$TEMP/$sp"_2
