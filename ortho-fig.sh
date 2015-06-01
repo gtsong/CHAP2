@@ -114,10 +114,10 @@ done
 height=`expr $num_sp \* 25`    # points
 height=`expr $height / 72`     # inches (with default dpi)
 height=`expr $height + 1`      # margins
+gheight=20
 if [ $height -lt 4 ]
 then
 	height=4
-	gheight=20
 elif [ $height -gt 10 ]
 then
 	height=10
