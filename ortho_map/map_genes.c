@@ -127,35 +127,44 @@ int get_gene_index(struct I reg, struct exons_list *genes, int num_genes, struct
 void map_genes_partition(struct DotList *algns, int num_algns, struct exons_list *exons1, int num_exons1, struct exons_list *genes1, int num_genes1, struct exons_list *genes2, int num_genes2, FILE *f)
 {
 	int i = 0, j = 0, k = 0, n = 0;
-	struct I cur_reg, temp_reg, cmp_reg;
+	struct I cur_reg = {0, 1}, temp_reg = {0, 1}, cmp_reg = {0, 1};
 	int lo = 0, hi = 0;
 	int s_loc = 0, e_loc = 0;
-	struct slist *sorted;
-	int *res_b, *res_e;
+	struct slist *sorted = NULL;
+	int *res_b = NULL, *res_e = NULL;
 	int count = 0;
-	struct int_map *parts;
+	struct int_map *parts = NULL;
 	int index = 0;
 	int val = -1, prev_val = -1, prev_index = -1;
-	int *bp;
+	int *bp = NULL;
 	int num_bp = 0;
 	int num_par = 0;
 	bool is_ps_marked = false;
 	int num_commas = 0;
 
-	parts = (struct int_map *) ckalloc(num_algns * sizeof(struct int_map));
-	bp = (int *) ckalloc((2*num_algns) * sizeof(int));
-	res_b = (int *) ckalloc(sizeof(int));
-	res_e = (int *) ckalloc(sizeof(int));
-	sorted = (struct slist *) ckalloc(num_algns * sizeof(struct slist));
+	if ( num_algns > 0 ) {
+		parts = (struct int_map *) ckalloc(2 * num_algns * sizeof(struct int_map));
+		bp = (int *) ckalloc((4 * num_algns) * sizeof(int));
+		sorted = (struct slist *) ckalloc(num_algns * sizeof(struct slist));
+	}
+
 	for( i = 0; i < num_algns; i++ ) {
 		sorted[i].id = i;
-		parts[i].reg = assign_I(0,1);
-		parts[i].bp = assign_I(0,1);
-		parts[i].index = -1;
-		bp[2*i] = -1;
-		bp[2*i+1] = -1;
+		parts[2*i].reg = assign_I(0,1);
+		parts[2*i].bp = assign_I(0,1);
+		parts[2*i].index = -1;
+		parts[2*i+1].reg = assign_I(0,1);
+		parts[2*i+1].bp = assign_I(0,1);
+		parts[2*i+1].index = -1;
+		bp[4*i] = -1;
+		bp[4*i+1] = -1;
+		bp[4*i+2] = -1;
+		bp[4*i+3] = -1;
 	}
 	sort_init_algns(sorted, algns, num_algns, INIT_SELF2);
+
+	res_b = (int *) ckalloc(sizeof(int));
+	res_e = (int *) ckalloc(sizeof(int));
 
 	cur_reg = assign_I(0, 1);
 	temp_reg = assign_I(0, 1);
@@ -322,9 +331,11 @@ void map_genes_partition(struct DotList *algns, int num_algns, struct exons_list
 		}
 	}
 
-	free(bp);
-	free(parts);
-	free(sorted);
+	if( num_algns > 0 ) {
+		free(bp);
+		free(parts);
+		free(sorted);
+	}
 	free(res_b);
 	free(res_e);
 }

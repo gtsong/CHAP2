@@ -155,6 +155,15 @@ int main(int argc, char **argv)
 		free(algns);
 	}
 
+	if( num_contigs1 > 0 ) {
+		free(contigs1);
+		free(len_sum1);
+	}
+
+	if( num_contigs2 > 0 ) {
+		free(contigs2);
+		free(len_sum2);
+	}
 	free(num_algns);
 	free(exons1);
 	free(genes1);

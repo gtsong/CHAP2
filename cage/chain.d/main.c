@@ -179,6 +179,9 @@ int main(int argc, char **argv)
  		 }
  		 fclose(f);
 		}
+		else {
+			i = 0;
+		}
 
 		num_rp1 = i;
 	
@@ -219,6 +222,9 @@ int main(int argc, char **argv)
 				}
  			}
  			fclose(f);
+		}
+		else {
+			i = 0;
 		}
 
 		num_rp2 = i;

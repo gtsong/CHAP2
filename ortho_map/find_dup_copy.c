@@ -217,8 +217,9 @@ int find_opt_du_copy(struct DotList *dots, int num_lines, int id, struct perm_pt
 			else if( dots[st[i].id].ctg_id1 != dots[id].ctg_id1 ) {}
 			else if( dots[st[i].id].ctg_id2 != dots[id].ctg_id2 ) {}
 			else if( dots[st[i].id].x.lower > dots[id].x.lower ) {}
-			else if( (dots[st[i].id].sign == 0) && (dots[st[i].id].y.lower > dots[id].y.lower )) {}
-			else if( (dots[st[i].id].sign == 1) && (dots[st[i].id].y.lower < dots[id].y.lower )) {}
+			else if( dots[st[i].id].x.upper > dots[id].x.upper ) {}
+			else if( (dots[st[i].id].sign == 0) && ((dots[st[i].id].y.lower > dots[id].y.lower) || (dots[st[i].id].y.upper > dots[id].y.upper) )) {}
+			else if( (dots[st[i].id].sign == 1) && ((dots[st[i].id].y.lower < dots[id].y.lower) || (dots[st[i].id].y.upper < dots[id].y.upper) )) {}
 			else if( subset(dots[st[i].id].m_x, dots[id].x) || subset(dots[st[i].id].m_y, dots[id].y) || subset(dots[id].m_x, dots[st[i].id].x) || subset(dots[id].m_y, dots[st[i].id].y) ) {}
 			else if( ((dots[st[i].id].pair_self == SELF) && (is_tandem(dots[st[i].id]) == true)) && ((dots[id].pair_self == SELF) && (is_tandem(dots[id]) == true))) {}
 			else 

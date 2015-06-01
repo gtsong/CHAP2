@@ -59,10 +59,10 @@ int get_score(struct DotList *dots, struct gap_list gps, float *d_rate, struct r
 
 		strcpy(temp_gps.name1, dots[temp_gps.id1].name1);
 		strcpy(temp_gps.name2, dots[temp_gps.id1].name2);
-		if( (score = check_insertion(dots, temp_gps, d_rate, rp2, num_rp2, Y_MODE, id2)) != -1 ) 
+		if( (num_rp2 > 0 ) && ((score = check_insertion(dots, temp_gps, d_rate, rp2, num_rp2, Y_MODE, id2)) != -1) ) 
 		{
 			temp_score = score;
-			if( (score = check_insertion(dots, temp_gps, d_rate, rp1, num_rp1, X_MODE, id1)) != -1 ) 
+			if( (num_rp1 > 0 ) && ((score = check_insertion(dots, temp_gps, d_rate, rp1, num_rp1, X_MODE, id1)) != -1) ) 
 			{
 				if( temp_score < score ) return(temp_score);
 				else return(score);
@@ -78,7 +78,7 @@ int get_score(struct DotList *dots, struct gap_list gps, float *d_rate, struct r
 
 		strcpy(temp_gps.name1, dots[temp_gps.id1].name1);
 		strcpy(temp_gps.name2, dots[temp_gps.id1].name2);
-		if( (score = check_insertion(dots, temp_gps, d_rate, rp2, num_rp2, Y_MODE, id2)) != -1 ) return(score);
+		if( (num_rp2 > 0) && ((score = check_insertion(dots, temp_gps, d_rate, rp2, num_rp2, Y_MODE, id2)) != -1) ) return(score);
 		else return(-1);
 	}
 	else if( (temp_gps.type == 2) || (temp_gps.type == 22) ) {
@@ -88,7 +88,7 @@ int get_score(struct DotList *dots, struct gap_list gps, float *d_rate, struct r
 
 		strcpy(temp_gps.name1, dots[temp_gps.id1].name2);
 		strcpy(temp_gps.name2, dots[temp_gps.id1].name1);
-		if( (score = check_insertion(dots, temp_gps, d_rate, rp1, num_rp1, Y_MODE, id1)) != -1 ) return(score);
+		if( (num_rp1 > 0) && ((score = check_insertion(dots, temp_gps, d_rate, rp1, num_rp1, Y_MODE, id1)) != -1) ) return(score);
 		else return(-1);
 	}
 	else return(-1);

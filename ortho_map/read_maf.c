@@ -289,7 +289,7 @@ void adjust_algn_pos(struct DotList *algns, int num_algns, struct n_pair *contig
   int *len_sum1, *len_sum2;
 	int i = 0;
   int id1 = 0, id2 = 0;
-  char name[LEN_NAME], sp_name[LEN_NAME], ctg_name[LEN_NAME];
+  char name[LEN_NAME] = "", sp_name[LEN_NAME] = "", ctg_name[LEN_NAME] = "";
   int ctg_id = -1;
 
   if( num1 > 0 ) len_sum1 = (int *) ckalloc(sizeof(int) * num1);

@@ -84,25 +84,26 @@ then
 		echo ">"$sp > "$TEMP/$sp"_1
 		$BIN/remove_headers $USER_SEQ/$sp >> "$TEMP/$sp"_1
 
-		if [ -f $TEMP/sp ]
-		then
-			echo ">"$sp > "$TEMP/$sp"_2
-			$BIN/remove_headers $TEMP/$sp >> "$TEMP/$sp"_2
+    if [ -f $TEMP/$sp.masked ]
+    then
+      echo ">"$sp > "$TEMP/$sp"_2
+      $BIN/remove_headers $TEMP/$sp.masked >> "$TEMP/$sp"_2
 
-			comp=`$BIN/check_mask "$TEMP/$sp"_1 "$TEMP/$sp"_2 | awk '{print $1}'` 
-			if [ "$comp" == "first" ] 
-			then
-				cat $USER_SEQ/$sp > $MASK_SEQ/$sp
-			else 
-				cat $TEMP/$sp.masked > $MASK_SEQ/$sp
-			fi
-		else
-			cat $USER_SEQ/$sp > $MASK_SEQ/$sp
-		fi
-		
-		rm -rf "$TEMP/$sp"_1 "$TEMP/$sp"_2
+      comp=`$BIN/check_mask "$TEMP/$sp"_1 "$TEMP/$sp"_2 | awk '{print $1}'`
+      if [ "$comp" == "first" ]
+      then
+        cat "$TEMP/$sp"_1 > $MASK_SEQ/$sp
+      else
+        cat $TEMP/$sp.masked > $MASK_SEQ/$sp
+      fi
+    	rm -rf "$TEMP/$sp"_1 "$TEMP/$sp"_2
+			cp $TEMP/$sp.out $RM_OUT/$sp.out
+    else
+      cat "$TEMP/$sp"_1 > $MASK_SEQ/$sp
+    	rm -rf "$TEMP/$sp"_1
+			cat ../rm_out.header > $RM_OUT/$sp.out
+    fi
 
-		cp $TEMP/$sp.out $RM_OUT/$sp.out
 	done
 elif [ \( $2 = "--no_rm" \) -o \( \( "$#" -eq 3 -a "$3" = "--no_rm" \) \) ]
 then

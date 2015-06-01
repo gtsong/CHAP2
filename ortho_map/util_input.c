@@ -136,11 +136,11 @@ void read_only_exons(struct exons_list *exons, int *num_exons, struct exons_list
 {
 	FILE *f;
 	int i = 0, j = 0;
-	char buf[1000], temp_name[100];
+	char buf[1000] = "", temp_name[100] = "";
 	int b = 0, e = 0;
 	int temp_code = -1;
 	int sp1_code = 1, sp2_code = 2;
-	char item1[LEN_NAME], item2[LEN_NAME], item3[LEN_NAME], item4[LEN_NAME];
+	char item1[LEN_NAME] = "", item2[LEN_NAME] = "", item3[LEN_NAME] = "", item4[LEN_NAME] = "";
 	int ctg_id = -1;
 
 	f = ckopen(fname, "r");
@@ -372,10 +372,10 @@ void read_exons(struct exons_list *init_exons, struct exons_list *exons, int *nu
 int count_local_algns(char *fname, char *species, char *species2)
 {
 	int count = 0;
-	FILE *f;
+	FILE *f = NULL;
 	int b1 = 0, e1 = 0, b2 = 0, e2 = 0, temp = 0;
-	char len1[LEN_NAME], len2[LEN_NAME], strand[LEN_NAME];
-	char name1[LEN_NAME], name2[LEN_NAME];
+	char len1[LEN_NAME] = "", len2[LEN_NAME] = "", strand[LEN_NAME] = "";
+	char name1[LEN_NAME] = "", name2[LEN_NAME] = "";
 	bool is_read = false;
 
 	if((f = fopen(fname, "r")) == NULL) {
@@ -449,7 +449,7 @@ int count_local_algns(char *fname, char *species, char *species2)
 
 int count_lines(FILE *f)
 {
-	char buf[1000];
+	char buf[1000] = "";
 	int count = 0;
 
 	fseek(f, 0, SEEK_SET);

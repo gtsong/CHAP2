@@ -117,6 +117,11 @@ height=`expr $height + 1`      # margins
 if [ $height -lt 4 ]
 then
 	height=4
+	gheight=20
+elif [ $height -gt 10 ]
+then
+	height=10
+	gheight=`expr 20 \* 28 / $num_sp`
 fi
 
 #x_chars=`$BIN/count_char $FIGURES/$ref_sp.x-ortho.fig`
@@ -135,7 +140,7 @@ then
 	echo "Invalid characters in intermediate file $TEMP/x-ortho.param.txt."
 	exit 1
 fi
-cmd="$JAVA -jar $JAR -size 6 $height -gsize $gwidth 20 -sfs $sfs -gfs $gfs -gla $gla -colors $COLOR_LIST $FIGURES/$ref_sp.x-ortho.fig > $FIGURES/$ref_sp.x-ortho.eps"
+cmd="$JAVA -jar $JAR -size 6 $height -gsize $gwidth $gheight -sfs $sfs -gfs $gfs -gla $gla -colors $COLOR_LIST $FIGURES/$ref_sp.x-ortho.fig > $FIGURES/$ref_sp.x-ortho.eps"
 echo "  $cmd"
 eval $cmd    # Note: eval is unsafe if variable contents are untrusted;
              # also beware of special characters that need escaping.
@@ -154,7 +159,7 @@ then
 	echo "Invalid characters in intermediate file $TEMP/n-ortho.param.txt."
 	exit 1
 fi
-cmd="$JAVA -jar $JAR -size 6 $height -gsize $gwidth 20 -sfs $sfs -gfs $gfs -gla $gla -colors $COLOR_LIST $FIGURES/$ref_sp.n-ortho.fig > $FIGURES/$ref_sp.n-ortho.eps"
+cmd="$JAVA -jar $JAR -size 6 $height -gsize $gwidth $gheight -sfs $sfs -gfs $gfs -gla $gla -colors $COLOR_LIST $FIGURES/$ref_sp.n-ortho.fig > $FIGURES/$ref_sp.n-ortho.eps"
 echo "  $cmd"
 eval $cmd    # see Note above
 

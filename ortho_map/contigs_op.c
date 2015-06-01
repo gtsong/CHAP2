@@ -135,7 +135,7 @@ void cal_length_sum(int *len_sum1, struct n_pair *contigs1, int num1)
 
 void concat_ctg_name(char *name, char *sp_name, char *ctg_name)
 {
-	char *token;
+	char *token = NULL;
 
 	if( strstr(name, ".") != NULL ) {
 		token = strtok(name, ".");	
